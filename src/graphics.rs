@@ -1,5 +1,6 @@
 use macroquad::{color::Color, text::{Font, TextParams, draw_text_ex}};
 
+#[allow(dead_code)]
 /// Wrapper to show text on screen.
 pub fn print(text: &str, x: f32, y: f32, font_size: u16, color: Color, font: Option<&Font>) {
     draw_text_ex(

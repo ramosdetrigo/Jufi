@@ -1,14 +1,16 @@
-use macroquad::{color::Color, shapes::draw_line};
-
+#![allow(dead_code)]
 use crate::algebra::Vec2;
+use macroquad::{color::Color, shapes::draw_line};
+use std::f64::consts::PI;
 
-/// Uma linha em um espaço 2D
+/// Struct para uma linha em um espaço 2D
 #[derive(Clone, Copy)]
 pub struct Line {
     pub p1: Vec2,
     pub p2: Vec2,
 }
 
+// Métodos
 impl Line {
     /// Construtor da linha
     pub fn new(p1: Vec2, p2: Vec2) -> Line {
@@ -43,12 +45,15 @@ impl Line {
         return self.length_squared() <= 1e-12;
     }
 
+    /// Checa se uma reta é paralela com a outra através do produto vetorial.
+    /// Se o produto vetorial der igual a 0, elas são paralalas. (Threshold 1e-8)
     pub fn is_parallel_with(&self, other: Line) -> bool {
         let v1 = self.p2 - self.p1;
         let v2 = other.p2 - other.p1;
         return v1.cross(v2).abs() <= 1e-8;
     }
 
+    /// Retorna se uma reta intersecta a outra
     pub fn intersects(&self, other: Line) -> bool {
         let ab = self.p2 - self.p1;
         let ac = other.p1 - self.p1;
@@ -71,5 +76,26 @@ impl Line {
         // Se s3 e s4 não tem o mesmo sinal, A e B não estão no mesmo lado de CD.
         // Logo, há interseção.
         return s3 * s4 < 0.0;
+    }
+
+    /// Retorna o ponto de interseção entre duas retas.
+    /// Utiliza a equação de interseção entre reta e hiperplano.
+    pub fn intersection_with(&self, other: Line) -> Vec2 {
+        let q = other.p1;
+        let n = (other.p2 - other.p1).rotated(PI / 2.0);
+
+        // Se as retas paralelas, o produto escalar entre elas será igual a 0
+        // E daí divisão por 0... Problemas, etc.
+        let bottom = (self.p2 - self.p1).dot(n);
+        if bottom.abs() < 1e-8 {
+            // Vetor nulo por enquanto. Lidar com tratamento de erro depois.
+            return Vec2::NULL;
+        }
+        let top = (q - self.p1).dot(n);
+        let t = top / bottom;
+
+        // Retorna r(t) = p1 + dr * t
+        // (r é a função do raio baseado na reta)
+        return self.p1 + ((self.p2 - self.p1) * t);
     }
 }

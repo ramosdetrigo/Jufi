@@ -7,6 +7,7 @@ pub struct Vec2 {
     pub y: f64,
 }
 
+// Métodos
 impl Vec2 {
     pub const NULL: Vec2 = Vec2 { x: 0.0, y: 0.0 };
     pub const X: Vec2 = Vec2 { x: 1.0, y: 0.0 };
