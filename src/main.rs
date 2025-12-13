@@ -10,7 +10,6 @@ mod physics; // Physics stuff: Shapes, collision detection, etc.
 #[macroquad::main("Hello, World!")]
 async fn main() {
     let mut reta1 = Line::new(Vec2::new(0.0, 0.0), Vec2::new(0.0, 0.0));
-
     let mut reta_mouse = reta1.clone();
     reta1.p1 = random_point(100, 500, 100, 500);
     reta1.p2 = random_point(100, 500, 100, 500);
@@ -34,17 +33,18 @@ async fn main() {
             reta1.p2 = random_point(100, 500, 100, 500);
         }
 
-        // Desenhamos a reta 1 (estática) de laranja
+        // Desenhamos a reta1 (estática) de laranja
         reta1.draw(2.0, color::ORANGE);
-        // Verde: colisão
-        // Vermelho: sem colisão
-        // Azul: retas paralelas
-        // Ponto roxo: reta degenerada
+
+        // Desenhamos a reta_mouse
         if reta_mouse.intersects(reta1) {
+            // Vermelho: colisão
             reta_mouse.draw(2.0, color::RED);
+            // Calcula o ponto de interseção e desenha ele
             let p = reta_mouse.intersection_with(reta1);
             draw_circle(p.x as f32, p.y as f32, 5.0, color::VIOLET)
         } else {
+            // Verde: sem colisão
             reta_mouse.draw(2.0, color::GREEN);
         }
 
@@ -52,9 +52,10 @@ async fn main() {
     }
 }
 
+/// Cria um ponto com coordenadas x,y aleatórias
+/// entre min_x,max_x e min_y,max_y
 fn random_point(min_x: i32, max_x: i32, min_y: i32, max_y: i32) -> Vec2 {
     let x = RandomRange::gen_range(min_x, max_x);
     let y = RandomRange::gen_range(min_y, max_y);
-
     return Vec2::new(x as f64, y as f64);
 }
