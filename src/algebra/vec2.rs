@@ -13,73 +13,73 @@ impl Vec2 {
     pub const Y: Vec2 = Vec2 { x: 0.0, y: 1.0 };
 
     #[inline]
-    /// Vec2's constructor.
+    /// Construtor do Vec2.
     pub fn new(x: f64, y: f64) -> Vec2 {
-        Vec2 { x, y }
+        return Vec2 { x, y };
     }
 
     #[inline]
-    /// Returns the dot product between two vectors
+    /// Retorna o produto escalar entre dois vetores
     pub fn dot(self, rhs: Vec2) -> f64 {
-        self.x * rhs.x + self.y * rhs.y
+        return self.x * rhs.x + self.y * rhs.y;
     }
 
     #[inline]
-    /// Returns the cross product between two vectors
+    /// Retorna o produto vetorial entre dois vetores
     pub fn cross(self, rhs: Vec2) -> f64 {
-        self.x * rhs.y - self.y * rhs.x
+        return self.x * rhs.y - self.y * rhs.x;
     }
 
     #[inline]
-    /// Returns the square of the magnitude of the vector. Faster than magnitude() * magnitude().
-    pub fn magnitude_squared(self) -> f64 {
-        self.x * self.x + self.y * self.y
+    /// Retorna o quadrado do tamanho do vetor (mais rápido que length() * length())
+    pub fn length_squared(self) -> f64 {
+        return self.x * self.x + self.y * self.y;
     }
 
     #[inline]
-    /// Returns the magnitude of the vector
-    pub fn magnitude(self) -> f64 {
-        self.magnitude_squared().sqrt()
+    /// Retorna o tamanho do vetor
+    pub fn length(self) -> f64 {
+        return self.length_squared().sqrt();
     }
 
     #[inline]
-    /// Returns a normalized version of the vector (divides the vector by its length)
+    /// Retorna o vetor normalizado (divide o vetor pelo seu tamanho)
     pub fn normalized(self) -> Vec2 {
-        self / self.magnitude()
+        return self / self.length();
     }
 
     #[inline]
-    /// Checks if the vector's magnitude equals 1 (within a certain threshold: `1e-8`)
+    /// Checa se o tamanho do vetor é 1 (threshold: `1e-6`)
     pub fn is_normalized(self) -> bool {
-        (self.magnitude_squared() - 1.0).abs() <= 1e-8
+        return (self.length_squared() - 1.0).abs() <= 1e-12;
     }
 
     #[inline]
-    /// Uses the dot product definition to return the angle between two vectors
+    /// Usa a definição do produto escalar para calcular o ângulo entre dois vetores
     pub fn angle_between(self, other: Vec2) -> f64 {
         let cos_theta = self.normalized().dot(other.normalized());
-        cos_theta.acos()
+        return cos_theta.acos();
     }
 
     #[inline]
-    /// Rotates the vector by a certain angle.
-    /// This uses the rotation matrix definition for the calculations.
+    /// Gira o vetor em um ângulo específico ao redor da origem.
+    /// Isso usa a definição da matriz de rotação para os cálculos.
     pub fn rotated(self, angle: f64) -> Vec2 {
         let new_x = self.x * angle.cos() - self.y * angle.sin();
         let new_y = self.x * angle.sin() + self.y * angle.cos();
-        Vec2 { x: new_x, y: new_y }
+        return Vec2 { x: new_x, y: new_y };
     }
 }
 
 ////// OPERATOR OVERLOADS //////
-/// Vector addition
+/// Adição de vetores
 impl Add<Vec2> for Vec2 {
     type Output = Vec2;
     fn add(self, rhs: Vec2) -> Vec2 {
-        Vec2 {
+        return Vec2 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
-        }
+        };
     }
 }
 
@@ -90,14 +90,14 @@ impl AddAssign<Vec2> for Vec2 {
     }
 }
 
-/// Vector subtraction
+/// Subtração de vetores
 impl Sub<Vec2> for Vec2 {
     type Output = Vec2;
     fn sub(self, rhs: Vec2) -> Vec2 {
-        Vec2 {
+        return Vec2 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
-        }
+        };
     }
 }
 
@@ -108,14 +108,14 @@ impl SubAssign<Vec2> for Vec2 {
     }
 }
 
-/// Division by scalar
+/// Divisão por escalar
 impl Div<f64> for Vec2 {
     type Output = Vec2;
     fn div(self, rhs: f64) -> Vec2 {
-        Vec2 {
+        return Vec2 {
             x: self.x / rhs,
             y: self.y / rhs,
-        }
+        };
     }
 }
 
@@ -126,24 +126,24 @@ impl DivAssign<f64> for Vec2 {
     }
 }
 
-/// Multiplication by scalar
+/// Multiplicação por escalar
 impl Mul<f64> for Vec2 {
     type Output = Vec2;
     fn mul(self, rhs: f64) -> Vec2 {
-        Vec2 {
+        return Vec2 {
             x: self.x * rhs,
             y: self.y * rhs,
-        }
+        };
     }
 }
 
 impl Mul<Vec2> for f64 {
     type Output = Vec2;
     fn mul(self, rhs: Vec2) -> Vec2 {
-        Vec2 {
+        return Vec2 {
             x: self * rhs.x,
             y: self * rhs.y,
-        }
+        };
     }
 }
 
@@ -154,18 +154,18 @@ impl MulAssign<f64> for Vec2 {
     }
 }
 
-/// Negative of vector - Short for `vec * -1`
+/// Negativo do vetor
 impl Neg for Vec2 {
     type Output = Vec2;
     fn neg(self) -> Vec2 {
-        Vec2 {
+        return Vec2 {
             x: -self.x,
             y: -self.y,
-        }
+        };
     }
 }
 
-/// Implements display trait for better printing
+/// Implementa o trait "Display" pra printar bonitinho etc.
 impl Display for Vec2 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {})", self.x, self.y)

@@ -1,2 +1,3 @@
 mod vec2;
-mod matrix3;
+
+pub use vec2::Vec2;
