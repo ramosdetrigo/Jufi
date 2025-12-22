@@ -1,10 +1,9 @@
 #![allow(dead_code)]
-use crate::algebra::Vec2;
+use crate::{algebra::Vec2, physics::Intersection};
 use macroquad::{color::Color, shapes::draw_line};
-use std::f64::consts::PI;
 
 /// Struct para uma linha em um espaço 2D
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Line {
     pub p1: Vec2,
     pub p2: Vec2,
@@ -29,16 +28,26 @@ impl Line {
         );
     }
 
+    /// Retorna um vetor normal à linha p1 - p2 (-90°)
+    pub fn normal(&self) -> Vec2 {
+        let v = self.p2 - self.p1; // vetor de p1 pra p2
+        let n = Vec2::new(v.y, -v.x);
+        return n.normalized();
+    }
+
+    #[inline]
     /// Retorna o tamanho da reta ao quadrado (mais rápido que length() * length())
     pub fn length_squared(&self) -> f64 {
         return (self.p1 - self.p2).length_squared();
     }
 
+    #[inline]
     /// Retorna o tamanho da reta
     pub fn length(&self) -> f64 {
         return (self.p1 - self.p2).length();
     }
 
+    #[inline]
     /// Retorna se a reta é degenerada ou não testando se
     /// a distância entre seus dois pontos é igual a 0 (threshold 1e-6)
     pub fn is_degenerate(&self) -> bool {
@@ -78,24 +87,34 @@ impl Line {
         return s3 * s4 < 0.0;
     }
 
-    /// Retorna o ponto de interseção entre duas retas.
+    pub fn direction(&self) -> Vec2 {
+        (self.p2 - self.p1).normalized()
+    }
+
+    /// Retorna a interseção entre duas retas (None se não há interseção).
     /// Utiliza a equação de interseção entre reta e hiperplano.
-    pub fn intersection_with(&self, other: Line) -> Vec2 {
-        let q = other.p1;
-        let n = (other.p2 - other.p1).rotated(PI / 2.0);
+    pub fn intersection(&self, other: Line) -> Option<Intersection> {
+        let r = self.p2 - self.p1;
+        let s = other.p2 - other.p1;
+        let n = Vec2::new(-s.y, s.x);
 
-        // Se as retas paralelas, o produto escalar entre elas será igual a 0
-        // E daí divisão por 0... Problemas, etc.
-        let bottom = (self.p2 - self.p1).dot(n);
+        // Se o produto escalar entre a reta e a normal da outra reta é igual a 0,
+        // isso quer dizer que elas são paralelas e não há colisão.
+        let bottom = r.dot(n);
         if bottom.abs() < 1e-8 {
-            // Vetor nulo por enquanto. Lidar com tratamento de erro depois.
-            return Vec2::NULL;
+            return None;
         }
-        let top = (q - self.p1).dot(n);
-        let t = top / bottom;
 
-        // Retorna r(t) = p1 + dr * t
-        // (r é a função do raio baseado na reta)
-        return self.p1 + ((self.p2 - self.p1) * t);
+        // t da interseção da reta1 com a reta2 (colisão da função raio)
+        let t = (other.p1 - self.p1).cross(s) / r.cross(s);
+        // "t" da interseção da reta2 com a reta1 (colisão da função raio)
+        let u = (other.p1 - self.p1).cross(r) / r.cross(s);
+
+        Some(Intersection {
+            t,
+            u,
+            p: self.p1 + r * t,
+            normal: other.normal(),
+        })
     }
 }

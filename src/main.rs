@@ -1,61 +1,93 @@
-use macroquad::{color, prelude::*, rand::RandomRange};
+use std::f64::consts::PI;
+
+use macroquad::{
+    color,
+    prelude::*,
+    rand::{RandomRange, srand},
+};
 
 mod algebra; // Vector and matrix classes, etc. Algebra.
 use algebra::Vec2;
 
-use crate::physics::shapes::Line;
+use crate::physics::shapes::{Line, Particle};
 mod graphics; // Wrappers to more easily draw stuff on screen
 mod physics; // Physics stuff: Shapes, collision detection, etc.
 
 #[macroquad::main("Hello, World!")]
 async fn main() {
-    let mut reta1 = Line::new(Vec2::new(0.0, 0.0), Vec2::new(0.0, 0.0));
-    let mut reta_mouse = reta1.clone();
-    reta1.p1 = random_point(100, 500, 100, 500);
-    reta1.p2 = random_point(100, 500, 100, 500);
+    // Seta uma seed aleatória baseada no horário do sistema
+    let current_time = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    srand(current_time);
+
+    // Vetor de partículas
+    let mut particles = vec![Particle::new(
+        Vec2::new(400.0, 300.0),
+        Vec2::new(200.0, 0.0).rotated(randf_range(-PI, PI)),
+    )];
+
+    let points = [
+        Vec2::new(200.0, 100.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
+        Vec2::new(600.0, 100.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
+        Vec2::new(600.0, 500.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
+        Vec2::new(200.0, 500.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
+    ];
+
+    let mut lines = vec![
+        Line::new(points[0], points[1]),
+        Line::new(points[1], points[2]),
+        Line::new(points[2], points[3]),
+        Line::new(points[3], points[0]),
+        Line::new(Vec2::new(0.0, 0.0), Vec2::new(0.0, 0.0)),
+    ];
+
+    let mut reta_mouse = Line::new(Vec2::new(0.0, 0.0), Vec2::new(0.0, 0.0));
 
     loop {
         // Setup do frame atual
         clear_background(color::BLACK);
         let (mx, my) = mouse_position();
         let mouse_pos = Vec2::new(mx as f64, my as f64);
+        let delta = get_frame_time();
 
-        // Clicando com o botão esquerdo você muda o ponto p1 da reta
-        if is_mouse_button_pressed(MouseButton::Left) {
-            reta_mouse.p1 = mouse_pos;
-        }
-        // E o ponto p2 segue o mouse.
-        reta_mouse.p2 = mouse_pos;
-
-        // Randomiza a reta1 quando você aperta espaço
+        // Adiciona uma nova partícula no sistema se espaço for pressionado
         if is_key_pressed(KeyCode::Space) {
-            reta1.p1 = random_point(100, 500, 100, 500);
-            reta1.p2 = random_point(100, 500, 100, 500);
+            particles.push(Particle::new(
+                Vec2::new(400.0, 300.0),
+                Vec2::new(200.0, 0.0).rotated(randf_range(-PI, PI)),
+            ));
         }
 
-        // Desenhamos a reta1 (estática) de laranja
-        reta1.draw(2.0, color::ORANGE);
+        // A última reta corresponde à posição do mouse.
+        if is_mouse_button_pressed(MouseButton::Left) {
+            reta_mouse.p1 = mouse_pos
+        }
+        reta_mouse.p2 = mouse_pos;
+        reta_mouse.draw(2.0, color::BEIGE.with_alpha(0.25));
 
-        // Desenhamos a reta_mouse
-        if reta_mouse.intersects(reta1) {
-            // Vermelho: colisão
-            reta_mouse.draw(2.0, color::RED);
-            // Calcula o ponto de interseção e desenha ele
-            let p = reta_mouse.intersection_with(reta1);
-            draw_circle(p.x as f32, p.y as f32, 5.0, color::VIOLET)
-        } else {
-            // Verde: sem colisão
-            reta_mouse.draw(2.0, color::GREEN);
+        if is_key_pressed(KeyCode::Enter) {
+            lines.push(reta_mouse);
+            reta_mouse.p1 = mouse_pos
+        }
+
+        // Desenha as retas
+        for line in &lines {
+            line.draw(2.0, color::WHITE);
+        }
+
+        // Desenha a partícula
+        for particle in &mut particles {
+            particle.update(delta as f64, &lines);
+            particle.draw(color::RED);
+            particle.draw_movement_line(delta as f64, 2.0, color::BLUE);
         }
 
         next_frame().await
     }
 }
 
-/// Cria um ponto com coordenadas x,y aleatórias
-/// entre min_x,max_x e min_y,max_y
-fn random_point(min_x: i32, max_x: i32, min_y: i32, max_y: i32) -> Vec2 {
-    let x = RandomRange::gen_range(min_x, max_x);
-    let y = RandomRange::gen_range(min_y, max_y);
-    return Vec2::new(x as f64, y as f64);
+fn randf_range(low: f64, high: f64) -> f64 {
+    RandomRange::gen_range(low, high)
 }

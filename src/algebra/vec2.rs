@@ -44,6 +44,18 @@ impl Vec2 {
     }
 
     #[inline]
+    /// Retorna a distância ao quadrado de um ponto até o outro
+    pub fn distance_to_squared(self, other: Vec2) -> f64 {
+        (self - other).length_squared()
+    }
+
+    #[inline]
+    /// Retorna a distância de um ponto até o outro
+    pub fn distance_to(self, other: Vec2) -> f64 {
+        (self - other).length()
+    }
+
+    #[inline]
     /// Retorna o vetor normalizado (divide o vetor pelo seu tamanho)
     pub fn normalized(self) -> Vec2 {
         return self / self.length();
@@ -69,6 +81,12 @@ impl Vec2 {
         let new_x = self.x * angle.cos() - self.y * angle.sin();
         let new_y = self.x * angle.sin() + self.y * angle.cos();
         return Vec2 { x: new_x, y: new_y };
+    }
+
+    #[inline]
+    /// Reflete o vetor em torno de um vetor normal
+    pub fn bounce(self, normal: Vec2) -> Vec2 {
+        self - 2.0 * self.dot(normal) * normal
     }
 }
 
