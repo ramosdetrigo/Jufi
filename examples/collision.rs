@@ -77,10 +77,8 @@ async fn main() {
         cloud3.iter().for_each(|p| p.draw(color::BLUE));
         cloud4.iter().for_each(|p| p.draw(color::PINK));
 
-        print("1 - Randomiza nuvem vermelha", 10.0, 10.0, 20, color::WHITE, Some(&nunito));
-        print("2 - Randomiza nuvem verde", 10.0, 30.0, 20, color::WHITE, Some(&nunito));
-        print("3 - Randomiza nuvem azul", 10.0, 50.0, 20, color::WHITE, Some(&nunito));
-        print("4 - Randomiza nuvem rosa", 10.0, 70.0, 20, color::WHITE, Some(&nunito));
+        print("1 a 4 - Randomiza nuvens vermelha, verde, azul e rosa", 10.0, 10.0, 20, color::WHITE, Some(&nunito));
+        print("Roda do mouse - Aumenta o círculo do mouse", 10.0, 30.0, 20, color::WHITE, Some(&nunito));
 
         next_frame().await;
     }

@@ -20,6 +20,7 @@ async fn main() {
     // Fonte principal
     let nunito = load_ttf_font("NunitoSans-Regular.ttf").await.unwrap();
 
+    // Gera nuvem de pontos aleatória e suas bounding boxes
     let mut points = point_cloud(randf_range(3, 50), 200.0, 150.0, 600.0, 450.0);
     let mut aabb = AABB::enclosing(&points);
     let mut circle = Circle::enclosing(&points);
