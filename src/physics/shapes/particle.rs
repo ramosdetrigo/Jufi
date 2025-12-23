@@ -4,6 +4,7 @@ use macroquad::{
     shapes::{draw_circle, draw_line},
 };
 
+#[derive(Clone, Copy, PartialEq)]
 pub struct Particle {
     pub position: Vec2,
     pub speed: Vec2,
