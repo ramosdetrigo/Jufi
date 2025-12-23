@@ -1,7 +1,8 @@
 use std::fmt::Display;
+use std::iter::Sum;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Vec2 {
     pub x: f64,
     pub y: f64,
@@ -181,6 +182,15 @@ impl Neg for Vec2 {
             x: -self.x,
             y: -self.y,
         };
+    }
+}
+
+impl Sum for Vec2 {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Vec2::NULL, |a, b| Vec2 {
+            x: a.x + b.x,
+            y: a.y + b.y,
+        })
     }
 }
 

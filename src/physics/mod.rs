@@ -1,5 +1,6 @@
 use crate::algebra::Vec2;
 pub mod shapes;
+pub mod generators;
 
 pub struct Intersection {
     /// O t da interseção em r1(t) (interseção do "raio reta1" com a reta2)

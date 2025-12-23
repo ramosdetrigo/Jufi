@@ -1,4 +1,9 @@
-use macroquad::{color::Color, text::{Font, TextParams, draw_text_ex}};
+use macroquad::{color::Color, rand::RandomRange, text::{Font, TextParams, draw_text_ex}};
+
+#[inline(always)]
+pub fn randf_range(low: f64, high: f64) -> f64 {
+    RandomRange::gen_range(low, high)
+}
 
 #[allow(dead_code)]
 /// Wrapper to show text on screen.

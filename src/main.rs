@@ -1,17 +1,14 @@
-use std::f64::consts::PI;
-
-use macroquad::{
-    color,
-    prelude::*,
-    rand::{RandomRange, srand},
-};
-
 mod algebra; // Vector and matrix classes, etc. Algebra.
 use algebra::Vec2;
+mod physics;
+mod utils; // Wrappers to more easily draw stuff on screen // Physics stuff: Shapes, collision detection, etc.
 
-use crate::physics::shapes::{Line, Particle};
-mod graphics; // Wrappers to more easily draw stuff on screen
-mod physics; // Physics stuff: Shapes, collision detection, etc.
+use crate::{
+    physics::shapes::{Line, Particle},
+    utils::randf_range,
+};
+use macroquad::{color, prelude::*, rand::srand};
+use std::f64::consts::PI;
 
 #[macroquad::main("Hello, World!")]
 async fn main() {
@@ -86,8 +83,4 @@ async fn main() {
 
         next_frame().await
     }
-}
-
-fn randf_range(low: f64, high: f64) -> f64 {
-    RandomRange::gen_range(low, high)
 }

@@ -1,3 +1,5 @@
+use std::f64::INFINITY;
+
 use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
 use crate::algebra::Vec2;
@@ -22,16 +24,40 @@ impl AABB {
         }
     }
 
+    /// Retorna uma AABB que contém todos os pontos de um vetor. Pânico se points.len() == 0
+    pub fn enclosing(points: &Vec<Vec2>) -> AABB {
+        assert!(points.len() > 0, "Número de pontos deve ser maior que 0!");
+        let mut min_x: f64 = INFINITY;
+        let mut min_y: f64 = INFINITY;
+        let mut max_x: f64 = -INFINITY;
+        let mut max_y: f64 = -INFINITY;
+
+        for p in points {
+            min_x = min_x.min(p.x);
+            min_y = min_y.min(p.y);
+            max_x = max_x.max(p.x);
+            max_y = max_y.max(p.y);
+        }
+
+        AABB {
+            min: Vec2::new(min_x, min_y),
+            max: Vec2::new(max_x, max_y),
+        }
+    }
+
+    #[inline]
     /// Retorna a largura da AABB
     pub fn width(&self) -> f64 {
         self.max.x - self.min.x
     }
 
+    #[inline]
     /// Retorna a altura da AABB
     pub fn height(&self) -> f64 {
         self.max.y - self.min.y
     }
 
+    #[inline]
     /// Desenha o frame da AABB na tela
     pub fn draw(&self, thickness: f32, color: Color) {
         draw_rectangle_lines(
@@ -44,7 +70,17 @@ impl AABB {
         );
     }
 
-    /// Checa se uma bounding box está sobreposta a outra
+    #[inline]
+    /// Checa se um ponto está dentro da bounding box
+    pub fn contains_point(&self, point: Vec2) -> bool {
+        point.x > self.min.x
+        && point.x < self.max.x
+        && point.y > self.min.y
+        && point.y < self.max.y
+    }
+
+    #[inline]
+    /// Checa se uma bounding box está sobreposta à outra
     pub fn overlaps_aabb(&self, other: AABB) -> bool {
         !(self.max.x < other.min.x
             || self.max.y < other.min.y
