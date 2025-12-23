@@ -4,11 +4,13 @@ mod physics;
 mod utils; // Wrappers to more easily draw stuff on screen // Physics stuff: Shapes, collision detection, etc.
 
 use crate::{
-    physics::shapes::{Line, Particle},
+    physics::{
+        generators::point_cloud,
+        shapes::{AABB, Circle, OOBB},
+    },
     utils::randf_range,
 };
 use macroquad::{color, prelude::*, rand::srand};
-use std::f64::consts::PI;
 
 #[macroquad::main("Hello, World!")]
 async fn main() {
@@ -19,66 +21,44 @@ async fn main() {
         .as_secs();
     srand(current_time);
 
-    // Vetor de partículas
-    let mut particles = vec![Particle::new(
-        Vec2::new(400.0, 300.0),
-        Vec2::new(200.0, 0.0).rotated(randf_range(-PI, PI)),
-    )];
-
-    let points = [
-        Vec2::new(200.0, 100.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
-        Vec2::new(600.0, 100.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
-        Vec2::new(600.0, 500.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
-        Vec2::new(200.0, 500.0) + Vec2::new(randf_range(-100.0, 100.0), randf_range(-100.0, 100.0)),
-    ];
-
-    let mut lines = vec![
-        Line::new(points[0], points[1]),
-        Line::new(points[1], points[2]),
-        Line::new(points[2], points[3]),
-        Line::new(points[3], points[0]),
-        Line::new(Vec2::new(0.0, 0.0), Vec2::new(0.0, 0.0)),
-    ];
-
-    let mut reta_mouse = Line::new(Vec2::new(0.0, 0.0), Vec2::new(0.0, 0.0));
+    let mut points = point_cloud(randf_range(10, 50), 200.0, 150.0, 600.0, 450.0);
+    let mut aabb = AABB::enclosing(&points);
+    let mut circle = Circle::enclosing(&points);
+    let mut oobb = OOBB::enclosing(&points);
+    let mut mouse_point;
 
     loop {
         // Setup do frame atual
         clear_background(color::BLACK);
         let (mx, my) = mouse_position();
         let mouse_pos = Vec2::new(mx as f64, my as f64);
-        let delta = get_frame_time();
+        let _delta = get_frame_time();
 
-        // Adiciona uma nova partícula no sistema se espaço for pressionado
+        mouse_point = mouse_pos;
+
         if is_key_pressed(KeyCode::Space) {
-            particles.push(Particle::new(
-                Vec2::new(400.0, 300.0),
-                Vec2::new(200.0, 0.0).rotated(randf_range(-PI, PI)),
-            ));
+            points = point_cloud(randf_range(10, 50), 200.0, 150.0, 600.0, 450.0);
+            aabb = AABB::enclosing(&points);
+            circle = Circle::enclosing(&points);
+            oobb = OOBB::enclosing(&points);
         }
 
-        // A última reta corresponde à posição do mouse.
-        if is_mouse_button_pressed(MouseButton::Left) {
-            reta_mouse.p1 = mouse_pos
-        }
-        reta_mouse.p2 = mouse_pos;
-        reta_mouse.draw(2.0, color::BEIGE.with_alpha(0.25));
+        aabb.draw(2.0, color::WHITE);
+        circle.draw(2.0, color::WHITE);
+        oobb.draw(2.0, color::WHITE);
 
-        if is_key_pressed(KeyCode::Enter) {
-            lines.push(reta_mouse);
-            reta_mouse.p1 = mouse_pos
+        for p in &points {
+            p.draw(color::YELLOW);
         }
 
-        // Desenha as retas
-        for line in &lines {
-            line.draw(2.0, color::WHITE);
-        }
-
-        // Desenha a partícula
-        for particle in &mut particles {
-            particle.update(delta as f64, &lines);
-            particle.draw(color::RED);
-            particle.draw_movement_line(delta as f64, 2.0, color::BLUE);
+        if oobb.contains_point(mouse_point) {
+            mouse_point.draw(color::PINK)
+        } else if aabb.contains_point(mouse_point) {
+            mouse_point.draw(color::GREEN)
+        } else if circle.contains_point(mouse_point) {
+            mouse_point.draw(color::BLUE)
+        } else {
+            mouse_point.draw(color::RED)
         }
 
         next_frame().await

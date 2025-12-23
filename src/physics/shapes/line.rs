@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use crate::{algebra::Vec2, physics::Intersection};
 use macroquad::{color::Color, shapes::draw_line};
 
@@ -11,6 +10,8 @@ pub struct Line {
 
 // Métodos
 impl Line {
+    #[inline]
+    #[must_use]
     /// Construtor da linha
     pub fn new(p1: Vec2, p2: Vec2) -> Line {
         return Line { p1, p2 };
@@ -28,6 +29,7 @@ impl Line {
         );
     }
 
+    #[must_use]
     /// Retorna um vetor normal à linha p1 - p2 (-90°)
     pub fn normal(&self) -> Vec2 {
         let v = self.p2 - self.p1; // vetor de p1 pra p2
@@ -36,24 +38,28 @@ impl Line {
     }
 
     #[inline]
+    #[must_use]
     /// Retorna o tamanho da reta ao quadrado (mais rápido que length() * length())
     pub fn length_squared(&self) -> f64 {
         return (self.p1 - self.p2).length_squared();
     }
 
     #[inline]
+    #[must_use]
     /// Retorna o tamanho da reta
     pub fn length(&self) -> f64 {
         return (self.p1 - self.p2).length();
     }
 
     #[inline]
+    #[must_use]
     /// Retorna se a reta é degenerada ou não testando se
     /// a distância entre seus dois pontos é igual a 0 (threshold 1e-6)
     pub fn is_degenerate(&self) -> bool {
         return self.length_squared() <= 1e-12;
     }
 
+    #[must_use]
     /// Checa se uma reta é paralela com a outra através do produto vetorial.
     /// Se o produto vetorial der igual a 0, elas são paralalas. (Threshold 1e-8)
     pub fn is_parallel_with(&self, other: Line) -> bool {
@@ -62,6 +68,7 @@ impl Line {
         return v1.cross(v2).abs() <= 1e-8;
     }
 
+    #[must_use]
     /// Retorna se uma reta intersecta a outra
     pub fn intersects(&self, other: Line) -> bool {
         let ab = self.p2 - self.p1;
@@ -87,10 +94,12 @@ impl Line {
         return s3 * s4 < 0.0;
     }
 
+    #[must_use]
     pub fn direction(&self) -> Vec2 {
         (self.p2 - self.p1).normalized()
     }
 
+    #[must_use]
     /// Retorna a interseção entre duas retas (None se não há interseção).
     /// Utiliza a equação de interseção entre reta e hiperplano.
     pub fn intersection(&self, other: Line) -> Option<Intersection> {

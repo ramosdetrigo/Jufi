@@ -1,7 +1,14 @@
-use macroquad::{color::Color, rand::RandomRange, text::{Font, TextParams, draw_text_ex}};
+use macroquad::{
+    color::Color,
+    rand::RandomRange,
+    text::{Font, TextParams, draw_text_ex},
+};
 
 #[inline(always)]
-pub fn randf_range(low: f64, high: f64) -> f64 {
+pub fn randf_range<T>(low: T, high: T) -> T
+where
+    T: RandomRange,
+{
     RandomRange::gen_range(low, high)
 }
 

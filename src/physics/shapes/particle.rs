@@ -11,6 +11,8 @@ pub struct Particle {
 }
 
 impl Particle {
+    #[inline]
+    #[must_use]
     /// Construtor da partícula
     pub fn new(position: Vec2, speed: Vec2) -> Particle {
         Particle { position, speed }

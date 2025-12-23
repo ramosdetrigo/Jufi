@@ -9,14 +9,18 @@ pub struct Circle {
 }
 
 impl Circle {
+    #[inline]
+    #[must_use]
     /// Gera um círculo com centro e raio definidos.
     pub fn new(center: Vec2, radius: f64) -> Circle {
         Circle { center, radius }
     }
 
+    #[must_use]
     /// Gera um bounding circle que contém todos os pontos de um vetor.
     /// Faz isso gerando um círculo no centro de uma AABB com raio (centro -> quina)
     pub fn enclosing(points: &Vec<Vec2>) -> Circle {
+        assert!(points.len() > 0, "Número de pontos deve ser maior que 0!");
         let aabb = AABB::enclosing(points);
         let center = (aabb.max + aabb.min) / 2.0;
         let radius = center.distance_to(aabb.min);
@@ -36,12 +40,14 @@ impl Circle {
     }
 
     #[inline]
+    #[must_use]
     /// Checa se se um ponto está dentro do círculo.
     pub fn contains_point(&self, point: Vec2) -> bool {
         point.distance_to_squared(self.center) < self.radius * self.radius
     }
 
     #[inline]
+    #[must_use]
     /// Checa se se um círculo está sobreposto ao outro
     pub fn overlaps_circle(&self, other: Circle) -> bool {
         let r1r2 = self.radius - other.radius;
@@ -49,6 +55,7 @@ impl Circle {
     }
 
     #[inline(always)]
+    #[must_use]
     /// Checa se um círculo está sobreposto a uma AABB
     pub fn overlaps_aabb(self, other: AABB) -> bool {
         other.overlaps_circle(self)
