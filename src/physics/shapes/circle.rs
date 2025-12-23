@@ -1,6 +1,6 @@
 use macroquad::{color::Color, shapes::draw_circle_lines};
 
-use crate::{algebra::Vec2, physics::shapes::AABB};
+use crate::{algebra::Vec2, physics::shapes::{AABB, OOBB}};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Circle {
@@ -58,6 +58,13 @@ impl Circle {
     #[must_use]
     /// Checa se um círculo está sobreposto a uma AABB
     pub fn overlaps_aabb(self, other: AABB) -> bool {
+        other.overlaps_circle(self)
+    }
+
+    #[inline(always)]
+    #[must_use]
+    /// Checa se um círculo está sobreposto a uma OOBB
+    pub fn overlaps_oobb(self, other: OOBB) -> bool {
         other.overlaps_circle(self)
     }
 }

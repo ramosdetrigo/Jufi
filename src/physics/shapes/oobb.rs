@@ -5,6 +5,7 @@ use macroquad::{color::Color, shapes::draw_line};
 
 use crate::{algebra::Vec2, physics::shapes::Circle};
 
+#[derive(Clone, Copy, PartialEq)]
 pub struct OOBB {
     pub center: Vec2,
     pub extents: Vec2,
@@ -26,8 +27,9 @@ impl OOBB {
 
     pub fn enclosing(points: &Vec<Vec2>) -> OOBB {
         assert!(points.len() > 0, "Número de pontos deve ser maior que 0!");
+        // Testa os 180 os ângulos entre -90 e 89 para ver qual a melhor bounding box (força bruta)
         (-90..90)
-            .par_bridge()
+            .par_bridge() // Faz as computações em paralelo
             .map(|t| OOBB::from_angle(points, (t as f64).to_radians()))
             .min_by(|a, b| a.area().total_cmp(&b.area()))
             .unwrap()
