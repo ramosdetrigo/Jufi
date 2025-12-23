@@ -1,13 +1,12 @@
 use jufi::{
     algebra::Vec2,
     physics::{
-        generators::point_cloud,
         generators::point_cloud_radial,
-        shapes::{AABB, Circle, OOBB},
+        shapes::{AABB, Circle, Collider, OOBB},
     },
     utils::{print, randf_range},
 };
-use macroquad::{color, prelude::{camera::mouse, *}, rand::srand};
+use macroquad::{color, prelude::*, rand::srand};
 
 #[macroquad::main("Hello, World!")]
 async fn main() {
@@ -42,7 +41,7 @@ async fn main() {
         mouse_circle.center = mouse_pos;
         let (_, mouse_wheel_y) = mouse_wheel();
         mouse_circle.radius += mouse_wheel_y as f64 * 2.0;
-        
+
         if is_key_pressed(KeyCode::Key1) {
             cloud1 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 200.0), 100.0);
             aabb1 = AABB::enclosing(&cloud1);
@@ -60,31 +59,28 @@ async fn main() {
             circle = Circle::enclosing(&cloud4);
         }
 
-        let circle_aabb1_check = circle.overlaps_aabb(aabb1);
-        let circle_aabb2_check = circle.overlaps_aabb(aabb2);
-        let circle_oobb_check = circle.overlaps_oobb(oobb);
-        let circle_mouse_check = circle.overlaps_circle(mouse_circle);
-        let mouse_aabb1_check = mouse_circle.overlaps_aabb(aabb1);
-        let mouse_aabb2_check = mouse_circle.overlaps_aabb(aabb2);
-        let mouse_oobb_check = mouse_circle.overlaps_oobb(oobb);
-        let aabb1_aabb2_check = aabb1.overlaps_aabb(aabb2);
+        let colliders = [
+            Collider::Circle(circle),
+            Collider::Circle(mouse_circle),
+            Collider::AABB(aabb1),
+            Collider::AABB(aabb2),
+            Collider::OOBB(oobb),
+        ];
 
-        let circle_hit = circle_aabb1_check || circle_aabb2_check || circle_oobb_check || circle_mouse_check;
-        let mouse_hit = mouse_aabb1_check || mouse_aabb2_check || mouse_oobb_check || circle_mouse_check;
-        let oobb_hit = circle_oobb_check || mouse_oobb_check;
-        let aabb1_hit = circle_aabb1_check || aabb1_aabb2_check || mouse_aabb1_check;
-        let aabb2_hit = circle_aabb2_check || aabb1_aabb2_check || mouse_aabb2_check;
-
-        oobb.draw(2.0, if oobb_hit { color::YELLOW } else { color::WHITE });
-        aabb1.draw(2.0, if aabb1_hit { color::YELLOW } else { color::WHITE });
-        aabb2.draw(2.0, if aabb2_hit { color::YELLOW } else { color::WHITE });
-        circle.draw(2.0, if circle_hit { color::YELLOW } else { color::WHITE });
-        mouse_circle.draw(2.0, if mouse_hit { color::YELLOW } else { color::WHITE });
+        colliders.iter().for_each(|c| {
+            let is_hit = colliders.iter().any(|other| c != other && c.collides_with(*other));
+            c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
+        });
 
         cloud1.iter().for_each(|p| p.draw(color::RED));
-        cloud2.iter().for_each(|p| p.draw(color::BLUE));
-        cloud3.iter().for_each(|p| p.draw(color::GREEN));
+        cloud2.iter().for_each(|p| p.draw(color::GREEN));
+        cloud3.iter().for_each(|p| p.draw(color::BLUE));
         cloud4.iter().for_each(|p| p.draw(color::PINK));
+
+        print("1 - Randomiza nuvem vermelha", 10.0, 10.0, 20, color::WHITE, Some(&nunito));
+        print("2 - Randomiza nuvem verde", 10.0, 30.0, 20, color::WHITE, Some(&nunito));
+        print("3 - Randomiza nuvem azul", 10.0, 50.0, 20, color::WHITE, Some(&nunito));
+        print("4 - Randomiza nuvem rosa", 10.0, 70.0, 20, color::WHITE, Some(&nunito));
 
         next_frame().await;
     }
