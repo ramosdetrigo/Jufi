@@ -3,7 +3,7 @@ use std::f64::{INFINITY, consts::PI};
 
 use macroquad::{color::Color, shapes::draw_line};
 
-use crate::algebra::Vec2;
+use crate::{algebra::Vec2, physics::shapes::Circle};
 
 pub struct OOBB {
     pub center: Vec2,
@@ -66,6 +66,22 @@ impl OOBB {
 
         (-self.extents.x < u_proj && u_proj < self.extents.x)
         && (-self.extents.y < v_proj && v_proj < self.extents.y)
+    }
+
+    /// Checa se uma OOBB está sobreposta a um círculo
+    pub fn overlaps_circle(&self, circle: Circle) -> bool {
+        // Obtém as coordenadas do círculo no espaço local da OOBB via projeção
+        let d = circle.center - self.center;
+        let local_circle_x = d.dot(self.u);
+        let local_circle_y = d.dot(self.v);
+
+        // Obtém o ponto mais próximo da OOBB pro centro do círculo
+        let closest_x = local_circle_x.clamp(-self.extents.x, self.extents.x);
+        let closest_y = local_circle_y.clamp(-self.extents.y, self.extents.y);
+
+        // Verifica se a distância do círculo até o ponto mais próximo da OOBB é menor que o raio
+        let d = Vec2::new(local_circle_x - closest_x, local_circle_y - closest_y);
+        d.length_squared() <= circle.radius * circle.radius
     }
 
     pub fn draw(&self, thickness: f32, color: Color) {

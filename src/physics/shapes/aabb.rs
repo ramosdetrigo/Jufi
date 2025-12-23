@@ -90,12 +90,12 @@ impl AABB {
     #[must_use]
     /// Checa se uma AABB está sobreposta a um círculo
     pub fn overlaps_circle(&self, circle: Circle) -> bool {
+        // Obtém o ponto mais próximo da AABB pro centro do círculo
         let closest_x = circle.center.x.clamp(self.min.x, self.max.x);
         let closest_y = circle.center.y.clamp(self.min.y, self.max.y);
 
-        let dx = circle.center.x - closest_x;
-        let dy = circle.center.y - closest_y;
-
-        (dx * dx + dy * dy) <= circle.radius * circle.radius
+        // Verifica se a distância do círculo até o ponto mais próximo da caixa é menor que o raio
+        let d = Vec2::new(circle.center.x - closest_x, circle.center.y - closest_y);
+        d.length_squared() <= circle.radius * circle.radius
     }
 }

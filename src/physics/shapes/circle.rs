@@ -50,7 +50,7 @@ impl Circle {
     #[must_use]
     /// Checa se se um círculo está sobreposto ao outro
     pub fn overlaps_circle(&self, other: Circle) -> bool {
-        let r1r2 = self.radius - other.radius;
+        let r1r2 = self.radius + other.radius;
         self.center.distance_to_squared(other.center) < r1r2 * r1r2
     }
 

@@ -26,6 +26,7 @@ async fn main() {
     let mut circle = Circle::enclosing(&points);
     let mut oobb = OOBB::enclosing(&points);
     let mut mouse_point;
+    let mut mouse_circle;
 
     loop {
         // Setup do frame atual
@@ -35,6 +36,7 @@ async fn main() {
         let _delta = get_frame_time();
 
         mouse_point = mouse_pos;
+        mouse_circle = Circle::new(mouse_pos, 50.0);
 
         if is_key_pressed(KeyCode::Space) {
             points = point_cloud(randf_range(10, 50), 200.0, 150.0, 600.0, 450.0);
@@ -59,6 +61,16 @@ async fn main() {
             mouse_point.draw(color::BLUE)
         } else {
             mouse_point.draw(color::RED)
+        }
+
+        if oobb.overlaps_circle(mouse_circle) {
+            mouse_circle.draw(2.0, color::PINK)
+        } else if aabb.overlaps_circle(mouse_circle) {
+            mouse_circle.draw(2.0, color::GREEN)
+        } else if circle.overlaps_circle(mouse_circle) {
+            mouse_circle.draw(2.0, color::BLUE)
+        } else {
+            mouse_circle.draw(2.0, color::WHITE)
         }
 
         next_frame().await
