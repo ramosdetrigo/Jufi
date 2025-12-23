@@ -2,7 +2,7 @@ use std::f64::INFINITY;
 
 use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
-use crate::algebra::Vec2;
+use crate::{algebra::Vec2, physics::shapes::Circle};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct AABB {
@@ -73,10 +73,7 @@ impl AABB {
     #[inline]
     /// Checa se um ponto está dentro da bounding box
     pub fn contains_point(&self, point: Vec2) -> bool {
-        point.x > self.min.x
-        && point.x < self.max.x
-        && point.y > self.min.y
-        && point.y < self.max.y
+        point.x > self.min.x && point.x < self.max.x && point.y > self.min.y && point.y < self.max.y
     }
 
     #[inline]
@@ -86,5 +83,16 @@ impl AABB {
             || self.max.y < other.min.y
             || self.min.x > other.max.x
             || self.min.y > other.max.y)
+    }
+
+    /// Checa se uma AABB está sobreposta a um círculo
+    pub fn overlaps_circle(&self, circle: Circle) -> bool {
+        let closest_x = circle.center.x.clamp(self.min.x, self.max.x);
+        let closest_y = circle.center.y.clamp(self.min.y, self.max.y);
+
+        let dx = circle.center.x - closest_x;
+        let dy = circle.center.y - closest_y;
+
+        (dx * dx + dy * dy) <= circle.radius * circle.radius
     }
 }

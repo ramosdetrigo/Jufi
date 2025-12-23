@@ -1,4 +1,6 @@
-use crate::algebra::Vec2;
+use macroquad::{color::Color, shapes::draw_circle_lines};
+
+use crate::{algebra::Vec2, physics::shapes::AABB};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Circle {
@@ -13,28 +15,42 @@ impl Circle {
     }
 
     /// Gera um bounding circle que contém todos os pontos de um vetor.
-    /// Faz isso calculando o ponto médio do vetor e usando a maior distância entre
-    /// o centro e um ponto do vetor como raio.
+    /// Faz isso gerando um círculo no centro de uma AABB com raio (centro -> quina)
     pub fn enclosing(points: &Vec<Vec2>) -> Circle {
-        // Pega o ponto médio de todos os pontos do vetor
-        let center = points.into_iter().copied().sum::<Vec2>() / points.len() as f64;
-        // Usa a maior distância entre o centro e um ponto do vetor como raio
-        let radius = points
-            .iter()
-            .map(|p| p.distance_to(center))
-            .max_by(|a, b| a.total_cmp(b))
-            .unwrap();
+        let aabb = AABB::enclosing(points);
+        let center = (aabb.max + aabb.min) / 2.0;
+        let radius = center.distance_to(aabb.min);
         Circle { center, radius }
     }
 
-    /// Retorna true se um ponto está dentro do círculo.
+    #[inline]
+    /// Desenha o frame da AABB na tela
+    pub fn draw(&self, thickness: f32, color: Color) {
+        draw_circle_lines(
+            self.center.x as f32,
+            self.center.y as f32,
+            self.radius as f32,
+            thickness,
+            color,
+        );
+    }
+
+    #[inline]
+    /// Checa se se um ponto está dentro do círculo.
     pub fn contains_point(&self, point: Vec2) -> bool {
         point.distance_to_squared(self.center) < self.radius * self.radius
     }
 
-    /// Retorna true se um círculo está sobreposto ao outro
+    #[inline]
+    /// Checa se se um círculo está sobreposto ao outro
     pub fn overlaps_circle(&self, other: Circle) -> bool {
-        let min_distance = self.radius - other.radius;
-        self.center.distance_to_squared(other.center) < min_distance * min_distance
+        let r1r2 = self.radius - other.radius;
+        self.center.distance_to_squared(other.center) < r1r2 * r1r2
+    }
+
+    #[inline(always)]
+    /// Checa se um círculo está sobreposto a uma AABB
+    pub fn overlaps_aabb(self, other: AABB) -> bool {
+        other.overlaps_circle(self)
     }
 }
