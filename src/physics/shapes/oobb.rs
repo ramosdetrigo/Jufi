@@ -71,38 +71,10 @@ impl OOBB {
     pub fn draw(&self, thickness: f32, color: Color) {
         let (v1, v2, v3, v4) = self.corners();
 
-        draw_line(
-            v1.x as f32,
-            v1.y as f32,
-            v2.x as f32,
-            v2.y as f32,
-            thickness,
-            color,
-        );
-        draw_line(
-            v2.x as f32,
-            v2.y as f32,
-            v3.x as f32,
-            v3.y as f32,
-            thickness,
-            color,
-        );
-        draw_line(
-            v3.x as f32,
-            v3.y as f32,
-            v4.x as f32,
-            v4.y as f32,
-            thickness,
-            color,
-        );
-        draw_line(
-            v4.x as f32,
-            v4.y as f32,
-            v1.x as f32,
-            v1.y as f32,
-            thickness,
-            color,
-        );
+        draw_line(v1.x as f32, v1.y as f32, v2.x as f32, v2.y as f32, thickness, color);
+        draw_line(v2.x as f32, v2.y as f32, v3.x as f32, v3.y as f32, thickness, color);
+        draw_line(v3.x as f32, v3.y as f32, v4.x as f32, v4.y as f32, thickness, color);
+        draw_line(v4.x as f32, v4.y as f32, v1.x as f32, v1.y as f32, thickness, color);
     }
 }
 
