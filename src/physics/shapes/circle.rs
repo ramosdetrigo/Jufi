@@ -1,6 +1,9 @@
 use macroquad::{color::Color, shapes::draw_circle_lines};
 
-use crate::{algebra::Vec2, physics::shapes::{AABB, OOBB, BoxCollider}};
+use crate::{
+    algebra::Vec2,
+    physics::shapes::{AABB, BoxCollider, OOBB},
+};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Circle {
@@ -18,13 +21,19 @@ impl Circle {
 
     #[must_use]
     /// Gera um bounding circle que contém todos os pontos de um vetor.
-    /// Faz isso gerando um círculo no centro de uma AABB com raio (centro -> quina).
+    /// Faz isso gerando um círculo no centro de uma AABB e usando a maior
+    /// distância do centro até um ponto do vetor como raio.
     /// Pânico se points.len() == 0
     pub fn enclosing(points: &Vec<Vec2>) -> Circle {
         assert!(points.len() > 0, "Número de pontos deve ser maior que 0!");
         let aabb = AABB::enclosing(points);
         let center = (aabb.max + aabb.min) / 2.0;
-        let radius = center.distance_to(aabb.min);
+        let radius = points
+            .iter()
+            .map(|p| p.distance_to_squared(center))
+            .max_by(|a, b| a.total_cmp(b))
+            .unwrap()
+            .sqrt();
         Circle { center, radius }
     }
 
@@ -46,7 +55,6 @@ impl Circle {
     pub fn contains_point(&self, point: Vec2) -> bool {
         point.distance_to_squared(self.center) < self.radius * self.radius
     }
-
 
     #[inline(always)]
     #[must_use]
