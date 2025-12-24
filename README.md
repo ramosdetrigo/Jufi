@@ -16,7 +16,14 @@ Testes de colisão entre bounding boxes e círculos \
 `cargo run --example collision` \
 ![collision](collision.png)
 
+---
 ### points
 Testes com pontos, nuvens de pontos, e geração de bounding boxes/círculos envoltórios. \
 `cargo run --example points` \
 ![points](points.png)
+
+---
+### particles
+Testes de simulação de partículas. \
+`cargo run --example particles` \
+![particles](particles.png)
