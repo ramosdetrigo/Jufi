@@ -24,8 +24,16 @@ pub trait BoxCollider {
 
     /// Checa se uma caixa colide com a outra usando SAT
     fn collides_with_box(&self, other: &dyn BoxCollider) -> bool {
-        // Eixos de teste: u e v de ambas as caixas
-        let axes = [self.u(), self.v(), other.u(), other.v()];
+        // Obtém os eixos necessários para o teste
+        let mut axes = vec![self.u(), self.v()];
+        let (a3, a4) = (other.u(), other.v());
+        // Checa se os eixos da outra caixa não são paralelos aos que já foram incluidos.
+        if a3.dot(axes[0]).abs() != 1.0 && a3.dot(axes[1]).abs() != 1.0 {
+            axes.push(a3);
+        }
+        if a4.dot(axes[0]).abs() != 1.0 && a4.dot(axes[1]).abs() != 1.0 {
+            axes.push(a4);
+        }
 
         // Vetor entre os centros
         let v_centros = other.center() - self.center();
@@ -55,7 +63,7 @@ pub trait BoxCollider {
     /// Checa se a caixa colide com um círculo
     fn collides_with_circle(&self, other: &Circle) -> bool {
         let s_extents = self.extents();
-        
+
         // A ideia aqui é projetar o círculo pro espaço local da caixa
         let d = other.center - self.center();
         let local_x = d.dot(self.u());
