@@ -3,7 +3,7 @@ use std::f64::{INFINITY, consts::PI};
 
 use macroquad::{color::Color, shapes::draw_line};
 
-use crate::{algebra::Vec2, physics::shapes::Circle};
+use crate::{algebra::Vec2, physics::shapes::{AABB, Circle}};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct OOBB {
@@ -85,6 +85,73 @@ impl OOBB {
         let d = Vec2::new(local_circle_x - closest_x, local_circle_y - closest_y);
         d.length_squared() <= circle.radius * circle.radius
     }
+
+    #[must_use]
+    /// Checa se uma OOBB está sobreposta a outra OOBB via SAT
+    pub fn overlaps_oobb(&self, other: OOBB) -> bool {
+        // Eixos de teste: u e v de ambas as caixas
+        let axes = [self.u, self.v, other.u, other.v];
+
+        // Vetor entre os centros
+        let v_centros = other.center - self.center;
+
+        // Realiza o teste para cada eixo necessário
+        for axis in axes {
+            // Projeções das OOBBs no eixo
+            let r_self =
+                self.extents.x * axis.dot(self.u).abs() +
+                self.extents.y * axis.dot(self.v).abs();
+            let r_other =
+                other.extents.x * axis.dot(other.u).abs() +
+                other.extents.y * axis.dot(other.v).abs();
+
+            // Distância entre centros projetada no eixo
+            let dist = v_centros.dot(axis).abs();
+
+            // (SAT) Para indicar sobreposição, a distância entre os centros projetada 
+            // no eixo deve ser menor que a soma dos "raios" projetados neste eixo
+            if dist > r_self + r_other {
+                return false;
+            }
+        }
+
+        true
+    }
+
+
+    #[must_use]
+    /// Checa se uma OOBB está sobreposta a uma AABB via SAT
+    pub fn overlaps_aabb(&self, other: AABB) -> bool {
+        // Eixos de teste: u e v de ambas as caixas
+        let axes = [self.u, self.v, Vec2::X, Vec2::Y];
+        let aabb_center = (other.min + other.max) / 2.0;
+        let aabb_extents = (other.max - other.min) / 2.0;
+
+        // Vetor entre os centros
+        let v_centros = aabb_center - self.center;
+
+        for axis in axes {
+            // Projeção dos objetos no eixo
+            let r_self =
+                self.extents.x * axis.dot(self.u).abs() +
+                self.extents.y * axis.dot(self.v).abs();
+            let r_other =
+                aabb_extents.x * axis.dot(Vec2::X).abs() +
+                aabb_extents.y * axis.dot(Vec2::Y).abs();
+
+            // Distância entre centros projetada no eixo
+            let dist = v_centros.dot(axis).abs();
+
+            // (SAT) Para indicar sobreposição, a distância entre os centros projetada 
+            // no eixo deve ser menor que a soma dos "raios" projetados neste eixo
+            if dist > r_self + r_other {
+                return false;
+            }
+        }
+
+        true
+    }
+
 
     pub fn draw(&self, thickness: f32, color: Color) {
         let (v1, v2, v3, v4) = self.corners();

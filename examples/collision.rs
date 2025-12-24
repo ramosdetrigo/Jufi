@@ -24,11 +24,13 @@ async fn main() {
     let mut cloud2 = point_cloud_radial(randf_range(3, 50), Vec2::new(400.0, 200.0), 100.0);
     let mut cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 350.0), 100.0);
     let mut cloud4 = point_cloud_radial(randf_range(3, 50), Vec2::new(500.0, 400.0), 100.0);
+    let mut cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 100.0), 100.0);
     
     let mut aabb1 = AABB::enclosing(&cloud1);
-    let mut oobb = OOBB::enclosing(&cloud2);
+    let mut oobb1 = OOBB::enclosing(&cloud2);
     let mut aabb2 = AABB::enclosing(&cloud3);
     let mut circle = Circle::enclosing(&cloud4);
+    let mut oobb2 = OOBB::enclosing(&cloud5);
 
     // Gera um círculo que vai seguir o mouse
     let mut mouse_circle = Circle::new(Vec2::NULL, 10.0);
@@ -51,7 +53,7 @@ async fn main() {
         }
         if is_key_pressed(KeyCode::Key2) {
             cloud2 = point_cloud_radial(randf_range(3, 50), Vec2::new(400.0, 200.0), 100.0);
-            oobb = OOBB::enclosing(&cloud2)
+            oobb1 = OOBB::enclosing(&cloud2)
         }
         if is_key_pressed(KeyCode::Key3) {
             cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 350.0), 100.0);
@@ -61,6 +63,10 @@ async fn main() {
             cloud4 = point_cloud_radial(randf_range(3, 50), Vec2::new(500.0, 400.0), 100.0);
             circle = Circle::enclosing(&cloud4);
         }
+        if is_key_pressed(KeyCode::Key5) {
+            cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 100.0), 100.0);
+            oobb2 = OOBB::enclosing(&cloud5);
+        }
 
         // Desenha cada bounding box checando por colisão uma com a outra
         let colliders = [
@@ -68,7 +74,8 @@ async fn main() {
             Collider::Circle(mouse_circle),
             Collider::AABB(aabb1),
             Collider::AABB(aabb2),
-            Collider::OOBB(oobb),
+            Collider::OOBB(oobb1),
+            Collider::OOBB(oobb2),
         ];
         colliders.iter().for_each(|c| {
             let is_hit = colliders.iter().any(|other| c != other && c.collides_with(*other));
@@ -80,9 +87,10 @@ async fn main() {
         cloud2.iter().for_each(|p| p.draw(color::GREEN));
         cloud3.iter().for_each(|p| p.draw(color::BLUE));
         cloud4.iter().for_each(|p| p.draw(color::PINK));
+        cloud5.iter().for_each(|p| p.draw(color::BROWN));
 
         // Tutorial
-        print("1 a 4 - Randomiza nuvens vermelha, verde, azul e rosa", 10.0, 10.0, 20, color::WHITE, Some(&nunito));
+        print("1 a 5 - Randomiza nuvens vermelha, verde, azul, rosa e marrom", 10.0, 10.0, 20, color::WHITE, Some(&nunito));
         print("Roda do mouse - Aumenta o círculo do mouse", 10.0, 30.0, 20, color::WHITE, Some(&nunito));
         next_frame().await;
     }

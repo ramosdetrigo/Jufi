@@ -2,7 +2,7 @@ use std::f64::INFINITY;
 
 use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
-use crate::{algebra::Vec2, physics::shapes::Circle};
+use crate::{algebra::Vec2, physics::shapes::{Circle, OOBB}};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct AABB {
@@ -97,5 +97,11 @@ impl AABB {
         // Verifica se a distância do círculo até o ponto mais próximo da caixa é menor que o raio
         let d = Vec2::new(circle.center.x - closest_x, circle.center.y - closest_y);
         d.length_squared() <= circle.radius * circle.radius
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub fn overlaps_oobb(&self, other: OOBB) -> bool {
+        other.overlaps_aabb(*self)
     }
 }

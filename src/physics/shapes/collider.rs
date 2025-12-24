@@ -20,12 +20,12 @@ impl Collider {
             // Self: AABB
             (Collider::AABB(a),   Collider::Circle(b)) => a.overlaps_circle(b),
             (Collider::AABB(a),   Collider::AABB(b))   => a.overlaps_aabb(b),
+            (Collider::AABB(a),   Collider::OOBB(b))   => a.overlaps_oobb(b),
 
             // Self: OOBB
             (Collider::OOBB(a),   Collider::Circle(b)) => a.overlaps_circle(b),
-
-            // Other cases
-            _ => false,
+            (Collider::OOBB(a),   Collider::OOBB(b)) => a.overlaps_oobb(b),
+            (Collider::OOBB(a),   Collider::AABB(b)) => a.overlaps_aabb(b),
         }
     }
 
