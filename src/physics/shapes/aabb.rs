@@ -4,7 +4,7 @@ use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{Circle, OOBB, SATCollider},
+    physics::shapes::{Circle, OOBB, BoxCollider},
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -79,37 +79,9 @@ impl AABB {
     pub fn contains_point(&self, point: Vec2) -> bool {
         point.x > self.min.x && point.x < self.max.x && point.y > self.min.y && point.y < self.max.y
     }
-
-    #[inline]
-    #[must_use]
-    /// Checa se uma bounding box está sobreposta à outra
-    pub fn overlaps_aabb(&self, other: AABB) -> bool {
-        !(self.max.x < other.min.x
-            || self.max.y < other.min.y
-            || self.min.x > other.max.x
-            || self.min.y > other.max.y)
-    }
-
-    #[must_use]
-    /// Checa se uma AABB está sobreposta a um círculo
-    pub fn overlaps_circle(&self, circle: Circle) -> bool {
-        // Obtém o ponto mais próximo da AABB pro centro do círculo
-        let closest_x = circle.center.x.clamp(self.min.x, self.max.x);
-        let closest_y = circle.center.y.clamp(self.min.y, self.max.y);
-
-        // Verifica se a distância do círculo até o ponto mais próximo da caixa é menor que o raio
-        let d = Vec2::new(circle.center.x - closest_x, circle.center.y - closest_y);
-        d.length_squared() <= circle.radius * circle.radius
-    }
-
-    #[inline(always)]
-    #[must_use]
-    pub fn overlaps_oobb(&self, other: OOBB) -> bool {
-        other.overlaps_aabb(*self)
-    }
 }
 
-impl SATCollider for AABB {
+impl BoxCollider for AABB {
     fn u(&self) -> Vec2 {
         Vec2::X
     }
@@ -129,7 +101,7 @@ impl SATCollider for AABB {
         self.draw(thickness, color);
     }
 
-    
+
     fn extents(&self) -> Vec2 {
         (self.max - self.min) / 2.0
     }

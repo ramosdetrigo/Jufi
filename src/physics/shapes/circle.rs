@@ -1,6 +1,6 @@
 use macroquad::{color::Color, shapes::draw_circle_lines};
 
-use crate::{algebra::Vec2, physics::shapes::{AABB, OOBB, SATCollider}};
+use crate::{algebra::Vec2, physics::shapes::{AABB, OOBB, BoxCollider}};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Circle {
@@ -46,52 +46,19 @@ impl Circle {
         point.distance_to_squared(self.center) < self.radius * self.radius
     }
 
+
+    #[inline(always)]
+    #[must_use]
+    /// Checa se o círculo colide com um objeto obedece ao SAT (uma AABB ou OOBB, nesse caso)
+    pub fn collides_with_box(&self, other: &dyn BoxCollider) -> bool {
+        other.collides_with_circle(self)
+    }
+
     #[inline]
     #[must_use]
-    /// Checa se se um círculo está sobreposto ao outro
-    pub fn overlaps_circle(&self, other: Circle) -> bool {
+    /// Checa se o círculo colide com outro círculo
+    pub fn collides_with_circle(&self, other: &Circle) -> bool {
         let r1r2 = self.radius + other.radius;
         self.center.distance_to_squared(other.center) < r1r2 * r1r2
-    }
-
-    #[inline(always)]
-    #[must_use]
-    /// Checa se um círculo está sobreposto a uma AABB
-    pub fn overlaps_aabb(self, other: AABB) -> bool {
-        other.overlaps_circle(self)
-    }
-
-    #[inline(always)]
-    #[must_use]
-    /// Checa se um círculo está sobreposto a uma OOBB
-    pub fn overlaps_oobb(self, other: OOBB) -> bool {
-        other.overlaps_circle(self)
-    }
-}
-
-
-impl SATCollider for Circle {
-    fn u(&self) -> Vec2 {
-        Vec2::X
-    }
-
-
-    fn v(&self) -> Vec2 {
-        Vec2::Y
-    }
-
-
-    fn center(&self) -> Vec2 {
-        self.center
-    }
-
-
-    fn draw(&self, thickness: f32, color: Color) {
-        self.draw(thickness, color);
-    }
-
-    
-    fn extents(&self) -> Vec2 {
-        Vec2::new(self.radius, self.radius)
     }
 }

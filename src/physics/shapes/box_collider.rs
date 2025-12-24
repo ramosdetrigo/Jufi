@@ -5,7 +5,7 @@ use crate::{
     physics::shapes::{AABB, Circle, OOBB},
 };
 
-pub trait SATCollider {
+pub trait BoxCollider {
     fn draw(&self, thickness: f32, color: Color);
 
     fn u(&self) -> Vec2;
@@ -16,7 +16,7 @@ pub trait SATCollider {
 
     fn extents(&self) -> Vec2;
 
-    fn collides_with(&self, other: &dyn SATCollider) -> bool {
+    fn collides_with_box(&self, other: &dyn BoxCollider) -> bool {
         // Eixos de teste: u e v de ambas as caixas
         let axes = [self.u(), self.v(), other.u(), other.v()];
 
@@ -42,5 +42,9 @@ pub trait SATCollider {
         }
 
         true
+    }
+
+    fn collides_with_circle(&self, other: &Circle) -> bool {
+        false
     }
 }

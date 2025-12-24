@@ -1,8 +1,10 @@
+use std::ptr;
+
 use jufi::{
     algebra::Vec2,
     physics::{
         generators::point_cloud_radial,
-        shapes::{AABB, Circle, SATCollider, OOBB},
+        shapes::{AABB, BoxCollider, Circle, OOBB},
     },
     utils::{print, randf_range},
 };
@@ -25,7 +27,7 @@ async fn main() {
     let mut cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 350.0), 100.0);
     let mut cloud4 = point_cloud_radial(randf_range(3, 50), Vec2::new(500.0, 400.0), 100.0);
     let mut cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 100.0), 100.0);
-    
+
     let mut aabb1 = AABB::enclosing(&cloud1);
     let mut oobb1 = OOBB::enclosing(&cloud2);
     let mut aabb2 = AABB::enclosing(&cloud3);
@@ -69,11 +71,12 @@ async fn main() {
         }
 
         // Desenha cada bounding box checando por colisão uma com a outra
-        let colliders: [&dyn SATCollider; 6] = [
-            &aabb1, &aabb2, &oobb1, &oobb2, &circle, &mouse_circle
-        ];
+        let colliders: [&dyn BoxCollider; 4] = [&aabb1, &aabb2, &oobb1, &oobb2];
+
         colliders.iter().for_each(|c| {
-            let is_hit = colliders.iter().any(|other| c != other && c.collides_with(*other));
+            let is_hit = colliders
+                .iter()
+                .any(|other| !ptr::eq(c, other) && c.collides_with_box(*other));
             c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
         });
 
@@ -85,8 +88,22 @@ async fn main() {
         cloud5.iter().for_each(|p| p.draw(color::BROWN));
 
         // Tutorial
-        print("1 a 5 - Randomiza nuvens vermelha, verde, azul, rosa e marrom", 10.0, 10.0, 20, color::WHITE, Some(&nunito));
-        print("Roda do mouse - Aumenta o círculo do mouse", 10.0, 30.0, 20, color::WHITE, Some(&nunito));
+        print(
+            "1 a 5 - Randomiza nuvens vermelha, verde, azul, rosa e marrom",
+            10.0,
+            10.0,
+            20,
+            color::WHITE,
+            Some(&nunito),
+        );
+        print(
+            "Roda do mouse - Aumenta o círculo do mouse",
+            10.0,
+            30.0,
+            20,
+            color::WHITE,
+            Some(&nunito),
+        );
         next_frame().await;
     }
 }
