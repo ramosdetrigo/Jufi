@@ -10,6 +10,10 @@ Features:
 - Geradores radiais e "em caixa" de nuvens de pontos
 - Geração de AABBs, OOBBs, e Círculos que englobam nuvem de pontos
 
+Bibliotecas usadas:
+- [Macroquad](https://macroquad.rs/) - para interatividade e desenhar coisas na tela
+- [Rayon](https://github.com/rayon-rs/rayon) - para paralelismo fácil
+
 # Exemplos
 ### collision
 Testes de colisão entre bounding boxes e círculos \
