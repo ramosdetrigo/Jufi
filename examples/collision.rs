@@ -71,12 +71,24 @@ async fn main() {
         }
 
         // Desenha cada bounding box checando por colisão uma com a outra
-        let colliders: [&dyn BoxCollider; 4] = [&aabb1, &aabb2, &oobb1, &oobb2];
+        let boxes: [&dyn BoxCollider; 4] = [&aabb1, &aabb2, &oobb1, &oobb2];
+        let circles: [&Circle; 2] = [&circle, &mouse_circle];
 
-        colliders.iter().for_each(|c| {
-            let is_hit = colliders
-                .iter()
-                .any(|other| !ptr::eq(c, other) && c.collides_with_box(*other));
+        boxes.iter().for_each(|c| {
+            let is_hit = boxes.iter()
+                // Teste para caixas
+                .any(|other| !ptr::eq(c, other) && c.collides_with_box(*other))
+                // Teste para círculos
+                || circles.iter().any(|other| c.collides_with_circle(other));
+            c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
+        });
+
+        circles.iter().for_each(|c| {
+            let is_hit = boxes.iter()
+                // Teste para caixas
+                .any(|other| c.collides_with_box(*other))
+                // Teste para círculos
+                || circles.iter().any(|other| c != other && c.collides_with_circle(other));
             c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
         });
 
@@ -89,18 +101,18 @@ async fn main() {
 
         // Tutorial
         print(
-            "1 a 5 - Randomiza nuvens vermelha, verde, azul, rosa e marrom",
+            "1 a 5 - Randomiza nuvens (1) vermelha, (2) verde, (3) azul, (4) rosa e (5) marrom",
             10.0,
             10.0,
-            20,
+            16,
             color::WHITE,
             Some(&nunito),
         );
         print(
             "Roda do mouse - Aumenta o círculo do mouse",
             10.0,
-            30.0,
-            20,
+            24.0,
+            16,
             color::WHITE,
             Some(&nunito),
         );
