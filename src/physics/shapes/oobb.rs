@@ -3,7 +3,7 @@ use std::f64::{INFINITY, consts::PI};
 
 use macroquad::{color::Color, shapes::draw_line};
 
-use crate::{algebra::Vec2, physics::shapes::{AABB, Circle}};
+use crate::{algebra::Vec2, physics::shapes::{AABB, Circle, SATCollider}};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct OOBB {
@@ -171,4 +171,27 @@ fn minmax_projection(points: &Vec<Vec2>, axis: Vec2) -> (f64, f64) {
         max = max.max(proj);
     }
     (min, max)
+}
+
+
+impl SATCollider for OOBB {
+    fn u(&self) -> Vec2 {
+        self.u
+    }
+
+    fn v(&self) -> Vec2 {
+        self.v
+    }
+
+    fn center(&self) -> Vec2 {
+        self.center
+    }
+
+    fn draw(&self, thickness: f32, color: Color) {
+        self.draw(thickness, color);
+    }
+
+    fn extents(&self) -> Vec2 {
+        self.extents
+    }
 }

@@ -1,6 +1,6 @@
 use macroquad::{color::Color, shapes::draw_circle_lines};
 
-use crate::{algebra::Vec2, physics::shapes::{AABB, OOBB}};
+use crate::{algebra::Vec2, physics::shapes::{AABB, OOBB, SATCollider}};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Circle {
@@ -66,5 +66,32 @@ impl Circle {
     /// Checa se um círculo está sobreposto a uma OOBB
     pub fn overlaps_oobb(self, other: OOBB) -> bool {
         other.overlaps_circle(self)
+    }
+}
+
+
+impl SATCollider for Circle {
+    fn u(&self) -> Vec2 {
+        Vec2::X
+    }
+
+
+    fn v(&self) -> Vec2 {
+        Vec2::Y
+    }
+
+
+    fn center(&self) -> Vec2 {
+        self.center
+    }
+
+
+    fn draw(&self, thickness: f32, color: Color) {
+        self.draw(thickness, color);
+    }
+
+    
+    fn extents(&self) -> Vec2 {
+        Vec2::new(self.radius, self.radius)
     }
 }

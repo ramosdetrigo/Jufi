@@ -2,7 +2,7 @@ use jufi::{
     algebra::Vec2,
     physics::{
         generators::point_cloud_radial,
-        shapes::{AABB, Circle, Collider, OOBB},
+        shapes::{AABB, Circle, SATCollider, OOBB},
     },
     utils::{print, randf_range},
 };
@@ -69,13 +69,8 @@ async fn main() {
         }
 
         // Desenha cada bounding box checando por colisão uma com a outra
-        let colliders = [
-            Collider::Circle(circle),
-            Collider::Circle(mouse_circle),
-            Collider::AABB(aabb1),
-            Collider::AABB(aabb2),
-            Collider::OOBB(oobb1),
-            Collider::OOBB(oobb2),
+        let colliders: [&dyn SATCollider; 6] = [
+            &aabb1, &aabb2, &oobb1, &oobb2, &circle, &mouse_circle
         ];
         colliders.iter().for_each(|c| {
             let is_hit = colliders.iter().any(|other| c != other && c.collides_with(*other));

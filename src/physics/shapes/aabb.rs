@@ -2,7 +2,10 @@ use std::f64::INFINITY;
 
 use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
-use crate::{algebra::Vec2, physics::shapes::{Circle, OOBB}};
+use crate::{
+    algebra::Vec2,
+    physics::shapes::{Circle, OOBB, SATCollider},
+};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct AABB {
@@ -103,5 +106,31 @@ impl AABB {
     #[must_use]
     pub fn overlaps_oobb(&self, other: OOBB) -> bool {
         other.overlaps_aabb(*self)
+    }
+}
+
+impl SATCollider for AABB {
+    fn u(&self) -> Vec2 {
+        Vec2::X
+    }
+
+
+    fn v(&self) -> Vec2 {
+        Vec2::Y
+    }
+
+
+    fn center(&self) -> Vec2 {
+        (self.min + self.max) / 2.0
+    }
+
+
+    fn draw(&self, thickness: f32, color: Color) {
+        self.draw(thickness, color);
+    }
+
+    
+    fn extents(&self) -> Vec2 {
+        (self.max - self.min) / 2.0
     }
 }
