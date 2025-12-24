@@ -1,5 +1,5 @@
 # Jufi - Biblioteca de física da Júlia
-Biblioteca de testes de física 2D criada como trabalho final da cadeira de matemática e física para jogos.
+Biblioteca de física 2D criada como trabalho final da cadeira de matemática e física para jogos.
 
 Features:
 - Simulação de partículas / colisão de partículas com linhas
