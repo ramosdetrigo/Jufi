@@ -22,11 +22,11 @@ async fn main() {
     let nunito = load_ttf_font("NunitoSans-Regular.ttf").await.unwrap();
 
     // Gera nuvens aleatórias e suas bounding boxes
-    let mut cloud1 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 200.0), 100.0);
-    let mut cloud2 = point_cloud_radial(randf_range(3, 50), Vec2::new(400.0, 200.0), 100.0);
-    let mut cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 350.0), 100.0);
-    let mut cloud4 = point_cloud_radial(randf_range(3, 50), Vec2::new(500.0, 400.0), 100.0);
-    let mut cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 100.0), 100.0);
+    let mut cloud1 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 250.0), 100.0);
+    let mut cloud2 = point_cloud_radial(randf_range(3, 50), Vec2::new(400.0, 250.0), 100.0);
+    let mut cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 400.0), 100.0);
+    let mut cloud4 = point_cloud_radial(randf_range(3, 50), Vec2::new(500.0, 450.0), 100.0);
+    let mut cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 150.0), 100.0);
 
     let mut aabb1 = AABB::enclosing(&cloud1);
     let mut oobb1 = OOBB::enclosing(&cloud2);
@@ -50,23 +50,23 @@ async fn main() {
 
         // Randomiza as respectivas nuvens ao pressionar as teclas de 1 a 4
         if is_key_pressed(KeyCode::Key1) {
-            cloud1 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 200.0), 100.0);
+            cloud1 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 250.0), 100.0);
             aabb1 = AABB::enclosing(&cloud1);
         }
         if is_key_pressed(KeyCode::Key2) {
-            cloud2 = point_cloud_radial(randf_range(3, 50), Vec2::new(400.0, 200.0), 100.0);
+            cloud2 = point_cloud_radial(randf_range(3, 50), Vec2::new(400.0, 250.0), 100.0);
             oobb1 = OOBB::enclosing(&cloud2)
         }
         if is_key_pressed(KeyCode::Key3) {
-            cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 350.0), 100.0);
+            cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 400.0), 100.0);
             aabb2 = AABB::enclosing(&cloud3);
         }
         if is_key_pressed(KeyCode::Key4) {
-            cloud4 = point_cloud_radial(randf_range(3, 50), Vec2::new(500.0, 400.0), 100.0);
+            cloud4 = point_cloud_radial(randf_range(3, 50), Vec2::new(500.0, 450.0), 100.0);
             circle = Circle::enclosing(&cloud4);
         }
         if is_key_pressed(KeyCode::Key5) {
-            cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 100.0), 100.0);
+            cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 150.0), 100.0);
             oobb2 = OOBB::enclosing(&cloud5);
         }
 
@@ -116,6 +116,15 @@ async fn main() {
             color::WHITE,
             Some(&nunito),
         );
+        print(
+            "Amarelo: colisão | Branco: sem colisão",
+            10.0,
+            38.0,
+            16,
+            color::WHITE,
+            Some(&nunito),
+        );
+
         next_frame().await;
     }
 }

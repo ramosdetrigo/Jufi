@@ -28,7 +28,7 @@ impl Vec2 {
     #[must_use]
     /// Retorna o vetor unitário alinhado ao eixo X rotacionado em theta radianos
     pub fn from_angle(theta: f64) -> Vec2 {
-        return Vec2::X.rotated(theta)
+        return Vec2::new(theta.cos(), theta.sin())
     }
 
     #[inline]

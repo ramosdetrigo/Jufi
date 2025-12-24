@@ -18,7 +18,8 @@ impl Circle {
 
     #[must_use]
     /// Gera um bounding circle que contém todos os pontos de um vetor.
-    /// Faz isso gerando um círculo no centro de uma AABB com raio (centro -> quina)
+    /// Faz isso gerando um círculo no centro de uma AABB com raio (centro -> quina).
+    /// Pânico se points.len() == 0
     pub fn enclosing(points: &Vec<Vec2>) -> Circle {
         assert!(points.len() > 0, "Número de pontos deve ser maior que 0!");
         let aabb = AABB::enclosing(points);

@@ -56,10 +56,14 @@ impl Particle {
         }
     }
 
+    #[inline]
+    /// Desenha a partícula
     pub fn draw(&self, color: Color) {
         draw_circle(self.position.x as f32, self.position.y as f32, 3.0, color);
     }
 
+    #[inline]
+    /// Desenha a linha do próximo movimento da partícula
     pub fn draw_movement_line(&self, delta: f64, thickness: f32, color: Color) {
         let next_pos = self.position + self.speed * delta;
         draw_line(
