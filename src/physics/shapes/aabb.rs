@@ -4,7 +4,7 @@ use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{Circle, OOBB, BoxCollider},
+    physics::shapes::{Circle, Collider, OOBB},
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -81,28 +81,26 @@ impl AABB {
     }
 }
 
-impl BoxCollider for AABB {
-    fn u(&self) -> Vec2 {
-        Vec2::X
-    }
-
-
-    fn v(&self) -> Vec2 {
-        Vec2::Y
-    }
-
-
+impl Collider for AABB {
     fn center(&self) -> Vec2 {
         (self.min + self.max) / 2.0
     }
-
 
     fn draw(&self, thickness: f32, color: Color) {
         self.draw(thickness, color);
     }
 
+    fn project(&self, axis: Vec2) -> (f64, f64) {
+        let extents = (self.max - self.min) / 2.0;
+        // Projeção do centro da caixa sobre o eixo
+        let center_p = self.center().dot(axis);
+        // Projeção da metade da caixa sobre o eixo
+        let extents_p = extents.x * axis.dot(Vec2::X).abs() + extents.y * axis.dot(Vec2::Y).abs();
+        // min, max
+        (center_p - extents_p, center_p + extents_p)
+    }
 
-    fn extents(&self) -> Vec2 {
-        (self.max - self.min) / 2.0
+    fn axes(&self, _other: &dyn Collider) -> Vec<Vec2> {
+        vec![Vec2::X, Vec2::Y]
     }
 }

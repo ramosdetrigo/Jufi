@@ -3,7 +3,10 @@ use std::f64::{INFINITY, consts::PI};
 
 use macroquad::{color::Color, shapes::draw_line};
 
-use crate::{algebra::Vec2, physics::shapes::{AABB, Circle, BoxCollider}};
+use crate::{
+    algebra::Vec2,
+    physics::shapes::{AABB, Circle, Collider},
+};
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct OOBB {
@@ -80,17 +83,44 @@ impl OOBB {
 
         // Faz o check padrão como em uma AABB
         (-self.extents.x < u_proj && u_proj < self.extents.x)
-        && (-self.extents.y < v_proj && v_proj < self.extents.y)
+            && (-self.extents.y < v_proj && v_proj < self.extents.y)
     }
-
 
     pub fn draw(&self, thickness: f32, color: Color) {
         let (v1, v2, v3, v4) = self.corners();
 
-        draw_line(v1.x as f32, v1.y as f32, v2.x as f32, v2.y as f32, thickness, color);
-        draw_line(v2.x as f32, v2.y as f32, v3.x as f32, v3.y as f32, thickness, color);
-        draw_line(v3.x as f32, v3.y as f32, v4.x as f32, v4.y as f32, thickness, color);
-        draw_line(v4.x as f32, v4.y as f32, v1.x as f32, v1.y as f32, thickness, color);
+        draw_line(
+            v1.x as f32,
+            v1.y as f32,
+            v2.x as f32,
+            v2.y as f32,
+            thickness,
+            color,
+        );
+        draw_line(
+            v2.x as f32,
+            v2.y as f32,
+            v3.x as f32,
+            v3.y as f32,
+            thickness,
+            color,
+        );
+        draw_line(
+            v3.x as f32,
+            v3.y as f32,
+            v4.x as f32,
+            v4.y as f32,
+            thickness,
+            color,
+        );
+        draw_line(
+            v4.x as f32,
+            v4.y as f32,
+            v1.x as f32,
+            v1.y as f32,
+            thickness,
+            color,
+        );
     }
 }
 
@@ -106,16 +136,7 @@ fn minmax_projection(points: &Vec<Vec2>, axis: Vec2) -> (f64, f64) {
     (min, max)
 }
 
-
-impl BoxCollider for OOBB {
-    fn u(&self) -> Vec2 {
-        self.u
-    }
-
-    fn v(&self) -> Vec2 {
-        self.v
-    }
-
+impl Collider for OOBB {
     fn center(&self) -> Vec2 {
         self.center
     }
@@ -124,7 +145,16 @@ impl BoxCollider for OOBB {
         self.draw(thickness, color);
     }
 
-    fn extents(&self) -> Vec2 {
-        self.extents
+    fn project(&self, axis: Vec2) -> (f64, f64) {
+        // Projeção do centro da caixa sobre o eixo
+        let center_p = self.center().dot(axis);
+        // Projeção da metade da caixa sobre o eixo
+        let extents_p = self.extents.x * axis.dot(Vec2::X).abs() + self.extents.y * axis.dot(Vec2::Y).abs();
+        // min, max
+        (center_p - extents_p, center_p + extents_p)
+    }
+
+    fn axes(&self, _other: &dyn Collider) -> Vec<Vec2> {
+        vec![self.u, self.v]
     }
 }

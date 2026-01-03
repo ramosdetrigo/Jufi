@@ -2,7 +2,7 @@ use macroquad::{color::Color, shapes::draw_circle_lines};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{AABB, BoxCollider, OOBB},
+    physics::shapes::{AABB, Collider, OOBB},
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -54,20 +54,5 @@ impl Circle {
     /// Checa se se um ponto está dentro do círculo.
     pub fn contains_point(&self, point: Vec2) -> bool {
         point.distance_to_squared(self.center) < self.radius * self.radius
-    }
-
-    #[inline(always)]
-    #[must_use]
-    /// Checa se o círculo colide com um objeto obedece ao SAT (uma AABB ou OOBB, nesse caso)
-    pub fn collides_with_box(&self, other: &dyn BoxCollider) -> bool {
-        other.collides_with_circle(self)
-    }
-
-    #[inline]
-    #[must_use]
-    /// Checa se o círculo colide com outro círculo
-    pub fn collides_with_circle(&self, other: &Circle) -> bool {
-        let r1r2 = self.radius + other.radius;
-        self.center.distance_to_squared(other.center) < r1r2 * r1r2
     }
 }

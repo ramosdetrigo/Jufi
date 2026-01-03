@@ -4,7 +4,7 @@ use jufi::{
     algebra::Vec2,
     physics::{
         generators::point_cloud_radial,
-        shapes::{AABB, BoxCollider, Circle, OOBB},
+        shapes::{AABB, Collider, Circle, OOBB},
     },
     utils::{print, randf_range},
 };
@@ -73,7 +73,7 @@ async fn main() {
         // Desenha cada bounding box checando por colisão uma com a outra
         let boxes: [&dyn BoxCollider; 4] = [&aabb1, &aabb2, &oobb1, &oobb2];
         let circles: [&Circle; 2] = [&circle, &mouse_circle];
-        
+
         boxes.iter().for_each(|c| {
             let is_hit = boxes.iter()
                 // Teste para caixas (skipa colisão consigo mesmo)
