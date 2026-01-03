@@ -57,10 +57,14 @@ impl Circle {
     }
 }
 
-
 impl Collider for Circle {
     fn axes(&self, other: &dyn Collider) -> Vec<Vec2> {
-        vec![other.center() - self.center]
+        let d = other.center() - self.center;
+        // Protege contra o caso onde os dois centros são iguais
+        if d.length_squared() == 0.0 {
+            return vec![];
+        }
+        vec![d.normalized()]
     }
 
     fn center(&self) -> Vec2 {
