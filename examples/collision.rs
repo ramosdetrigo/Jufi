@@ -4,7 +4,7 @@ use jufi::{
     algebra::Vec2,
     physics::{
         generators::point_cloud_radial,
-        shapes::{AABB, Collider, Circle, OOBB},
+        shapes::{AABB, Circle, Collider, OOBB, collides},
     },
     utils::{print, randf_range},
 };
@@ -70,25 +70,13 @@ async fn main() {
             oobb2 = OOBB::enclosing(&cloud5);
         }
 
-        // Desenha cada bounding box checando por colisão uma com a outra
-        let boxes: [&dyn BoxCollider; 4] = [&aabb1, &aabb2, &oobb1, &oobb2];
-        let circles: [&Circle; 2] = [&circle, &mouse_circle];
+        // Desenha cada collider checando por colisão uma com a outra
+        let colliders: [&dyn Collider; 6] = [&aabb1, &aabb2, &oobb1, &oobb2, &circle, &mouse_circle];
 
-        boxes.iter().for_each(|c| {
-            let is_hit = boxes.iter()
-                // Teste para caixas (skipa colisão consigo mesmo)
-                .any(|other| !ptr::eq(c, other) && c.collides_with_box(*other))
-                // Teste para círculos
-                || circles.iter().any(|other| c.collides_with_circle(other));
-            c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
-        });
-
-        circles.iter().for_each(|c| {
-            let is_hit = boxes.iter()
-                // Teste para caixas
-                .any(|other| c.collides_with_box(*other))
-                // Teste para círculos (skipa colisão consigo mesmo)
-                || circles.iter().any(|other| c != other && c.collides_with_circle(other));
+        colliders.iter().for_each(|c| {
+            let is_hit = colliders.iter()
+                // ptr::eq --> skipa colisão consigo mesmo
+                .any(|other| !ptr::eq(c, other) && collides(*c, *other));
             c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
         });
 

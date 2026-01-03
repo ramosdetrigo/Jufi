@@ -149,7 +149,8 @@ impl Collider for OOBB {
         // Projeção do centro da caixa sobre o eixo
         let center_p = self.center().dot(axis);
         // Projeção da metade da caixa sobre o eixo
-        let extents_p = self.extents.x * axis.dot(Vec2::X).abs() + self.extents.y * axis.dot(Vec2::Y).abs();
+        let extents_p =
+            self.extents.x * axis.dot(self.u).abs() + self.extents.y * axis.dot(self.v).abs();
         // min, max
         (center_p - extents_p, center_p + extents_p)
     }
