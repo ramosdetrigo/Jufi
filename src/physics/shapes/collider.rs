@@ -20,11 +20,17 @@ pub trait Collider {
     fn axes(&self, other: &dyn Collider) -> Vec<Vec2>;
 }
 
-/// Checa se uma caixa colide com a outra usando SAT
+/// Checa se um objeto colide com o outro usando SAT
 pub fn collides(a: &dyn Collider, b: &dyn Collider) -> bool {
     // Obtém os eixos necessários para o teste
     let mut axes = a.axes(b);
-    axes.extend(b.axes(a));
+    let bx: Vec<Vec2> = b
+        .axes(a)
+        .into_iter()
+        // Filtra os eixos paralelos
+        .filter(|b| !axes.iter().any(|a| a.dot(*b) == 0.0))
+        .collect();
+    axes.extend(bx);
 
     // Realiza o teste para cada eixo necessário
     for axis in axes {
@@ -38,6 +44,6 @@ pub fn collides(a: &dyn Collider, b: &dyn Collider) -> bool {
         }
     }
 
-    // Se nenhum teste retornou falso, as caixas estão colidindo.
+    // Se nenhum teste retornou falso, os objetos estão colidindo.
     true
 }
