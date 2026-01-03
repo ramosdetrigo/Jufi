@@ -17,6 +17,9 @@ pub trait Collider {
     fn project(&self, axis: Vec2) -> (f64, f64);
 
     /// Retorna os eixos com que o objeto contribui para o cálculo.
+    /// (O "other" é necessário para definir o eixo do círculo:
+    /// o único eixo que importa seria o eixo do centro do círculo
+    /// pro centro do outro objeto checado.)
     fn axes(&self, other: &dyn Collider) -> Vec<Vec2>;
 }
 
