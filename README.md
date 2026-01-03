@@ -5,8 +5,7 @@ Features:
 - Simulação de partículas / colisão de partículas com linhas
 - Checks de pertencimento de ponto a AABBs, OOBBs, e Círculos.
 - Checks de sobreposição entre AABBs, OOBBs e Círculos.
-  - AABBs e OOBBs via SAT (Separating Axis Theorem).
-  - Círculos e outros via projeção para espaço local + check vs. AABB
+  - Todos via SAT (Separating Axis Theorem).
 - Geradores radiais e "em caixa" de nuvens de pontos
 - Geração de AABBs, OOBBs, e Círculos que englobam nuvem de pontos
 
@@ -16,7 +15,7 @@ Bibliotecas usadas:
 
 # Exemplos
 ### collision
-Testes de colisão entre bounding boxes e círculos \
+Testes de colisão entre bounding boxes (aabb, oobb, e círculos) \
 `cargo run --example collision` \
 ![collision](collision.png)
 
