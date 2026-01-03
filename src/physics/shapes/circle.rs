@@ -56,3 +56,23 @@ impl Circle {
         point.distance_to_squared(self.center) < self.radius * self.radius
     }
 }
+
+
+impl Collider for Circle {
+    fn axes(&self, other: &dyn Collider) -> Vec<Vec2> {
+        vec![other.center() - self.center]
+    }
+
+    fn center(&self) -> Vec2 {
+        self.center
+    }
+
+    fn draw(&self, thickness: f32, color: Color) {
+        self.draw(thickness, color);
+    }
+
+    fn project(&self, axis: Vec2) -> (f64, f64) {
+        let c = self.center.dot(axis); // projeção do centro pro eixo
+        (c - self.radius, c + self.radius)
+    }
+}
