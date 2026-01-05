@@ -11,6 +11,10 @@ pub struct Vec2 {
     pub y: f64,
 }
 
+/// Epsilon para erro numérico
+const EPS: f64 = 1e-6;
+const EPS_SQR: f64 = EPS*EPS;
+
 // Métodos
 impl Vec2 {
     pub const NULL: Vec2 = Vec2 { x: 0.0, y: 0.0 };
@@ -87,16 +91,16 @@ impl Vec2 {
 
     #[inline]
     #[must_use]
-    /// Checa se o tamanho do vetor é 1 (threshold: `1e-6`)
+    /// Checa se o tamanho do vetor é 1 (threshold: `1e-6` aplicado ao comprimento ao quadrado -> `1e-12`)
     pub fn is_normalized(self) -> bool {
-        return (self.length_squared() - 1.0).abs() <= 1e-12;
+        return (self.length_squared() - 1.0).abs() <= EPS_SQR;
     }
 
     #[inline]
     #[must_use]
     /// Checa se o vetor é paralelo ao outro (threshold: `1e-6`)
     pub fn is_parallel(self, other: Vec2) -> bool {
-        return self.cross(other).abs() <= 1e-6;
+        return self.cross(other).abs() <= EPS;
     }
 
     #[inline]
