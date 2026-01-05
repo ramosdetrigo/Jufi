@@ -65,7 +65,7 @@ impl Circle {
     }
 
     #[inline]
-    /// Retorna o eixo entre o centro do círculo e um ponto
+    /// (private) Retorna o eixo entre o centro do círculo e um ponto
     /// (Vetor vazio se os pontos forem iguais. Evita vetor degenerado.)
     fn sanitized_axis(&self, point: Vec2) -> Vec<Vec2> {
         if self.center.is_same(point) {
@@ -79,10 +79,10 @@ impl Circle {
 impl Collider for Circle {
     fn sat_axes(&self, other: &dyn Collider) -> Vec<Vec2> {
         let edges = other.edges();
-        // Caso 1: Círculo
+        // Caso 1: Círculo -> Eixo entre os dois centros
         if edges.is_empty() {
             self.sanitized_axis(other.center())
-        // Caso 2: Ponto mais próximo
+        // Caso 2: Polígono -> Eixo entre o centro do círculo e o ponto mais próximo do polígono.
         } else {
             let closest_point = edges
                 .into_iter()

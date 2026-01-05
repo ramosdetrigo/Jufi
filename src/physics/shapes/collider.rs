@@ -22,7 +22,7 @@ pub trait Collider {
     /// Retorna os eixos com que o objeto contribui para o cálculo.
     /// (O "other" é necessário para definir o eixo do círculo:
     /// o único eixo que importa seria o eixo do centro do círculo
-    /// pro ponto mais próximo entre o círculo .)
+    /// pro ponto mais próximo entre o círculo.)
     fn sat_axes(&self, other: &dyn Collider) -> Vec<Vec2>;
 }
 
