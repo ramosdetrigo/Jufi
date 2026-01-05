@@ -29,19 +29,18 @@ pub trait Collider {
 /// Checa se um objeto colide com o outro usando SAT
 pub fn collides(a: &dyn Collider, b: &dyn Collider) -> bool {
     // Obtém os eixos necessários para o teste
-    let mut axes = a.sat_axes(b);
-    let bx = b.sat_axes(a)
-        .into_iter()
+    let ax = a.sat_axes(b);
+    let bx = b.sat_axes(a);
+    let axes = ax.iter().chain(
         // Filtra os eixos paralelos
-        .filter(|b_axis| !axes.iter().any(|a_axis| a_axis.is_parallel(*b_axis)))
-        .collect::<Vec<Vec2>>();
-    axes.extend(bx);
+        bx.iter().filter(|b_axis| !ax.iter().any(|a_axis| a_axis.is_parallel(**b_axis))),
+    );
 
     // (SAT) Se algum eixo indica separação entre os objetos,
     // isso é suficiente para indicar que eles não estão colidindo.
     !axes.into_iter().any(|axis| {
-        let (min_a, max_a) = a.project(axis);
-        let (min_b, max_b) = b.project(axis);
+        let (min_a, max_a) = a.project(*axis);
+        let (min_b, max_b) = b.project(*axis);
         max_a < min_b || max_b < min_a
     })
 }
