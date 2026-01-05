@@ -28,6 +28,7 @@ pub trait Collider {
 
         // Obtém os eixos necessários para o teste
         let mut axes = a.axes();
+        // Sem eixos -> Círculo -> Eixo necessário é o entre os centros
         if axes.is_empty() {
             axes = center_axis(a.center(), b.center())
         }
