@@ -4,7 +4,7 @@ use jufi::{
     algebra::Vec2,
     physics::{
         generators::point_cloud_radial,
-        shapes::{AABB, Circle, Collider, OOBB},
+        shapes::{AABB, Circle, Collider, OOBB, collides},
     },
     utils::{print, randf_range},
 };
@@ -76,7 +76,7 @@ async fn main() {
         colliders.iter().for_each(|c| {
             let is_hit = colliders.iter()
                 // ptr::eq --> skipa colisão consigo mesmo
-                .any(|other| !ptr::eq(c, other) && c.collides(*other));
+                .any(|other| !ptr::eq(c, other) && collides(*c, *other));
             c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
         });
 

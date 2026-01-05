@@ -100,7 +100,7 @@ impl Collider for AABB {
         (center_p - extents_p, center_p + extents_p)
     }
 
-    fn axes(&self) -> Vec<Vec2> {
+    fn sat_axes(&self, _other: &dyn Collider) -> Vec<Vec2> {
         vec![Vec2::X, Vec2::Y]
     }
 }

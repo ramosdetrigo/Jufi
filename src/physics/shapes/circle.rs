@@ -58,9 +58,9 @@ impl Circle {
 }
 
 impl Collider for Circle {
-    fn axes(&self) -> Vec<Vec2> {
-        // O único eixo que importa é o eixo entre os centros dos objetos checados
-        vec![] // Vetor vazio (o eixo entre os centros é calculado na função collides_with)
+    fn sat_axes(&self, other: &dyn Collider) -> Vec<Vec2> {
+        // Placeholder: Implementação errada
+        vec![(self.center - other.center()).normalized()]
     }
 
     fn center(&self) -> Vec2 {
