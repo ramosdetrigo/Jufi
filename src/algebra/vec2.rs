@@ -28,7 +28,7 @@ impl Vec2 {
     #[must_use]
     /// Retorna o vetor unitário alinhado ao eixo X rotacionado em theta radianos
     pub fn from_angle(theta: f64) -> Vec2 {
-        return Vec2::new(theta.cos(), theta.sin())
+        return Vec2::new(theta.cos(), theta.sin());
     }
 
     #[inline]
@@ -90,6 +90,13 @@ impl Vec2 {
     /// Checa se o tamanho do vetor é 1 (threshold: `1e-6`)
     pub fn is_normalized(self) -> bool {
         return (self.length_squared() - 1.0).abs() <= 1e-12;
+    }
+
+    #[inline]
+    #[must_use]
+    /// Checa se o vetor é paralelo ao outro (threshold: `1e-6`)
+    pub fn is_parallel(self, other: Vec2) -> bool {
+        return self.cross(other).abs() <= 1e-6;
     }
 
     #[inline]

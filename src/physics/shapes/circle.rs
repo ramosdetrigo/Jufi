@@ -58,15 +58,9 @@ impl Circle {
 }
 
 impl Collider for Circle {
-    fn axes(&self, other: &dyn Collider) -> Vec<Vec2> {
-        // O único eixo que vai importar pro círculo
-        // é o eixo entre o centro dele e o centro do outro objeto
-        let d = other.center() - self.center;
-        // Protege contra o caso onde os dois centros são iguais
-        if d.length_squared() == 0.0 {
-            return vec![];
-        }
-        vec![d.normalized()]
+    fn axes(&self) -> Vec<Vec2> {
+        // O único eixo que importa é o eixo entre os centros dos objetos checados
+        vec![] // Vetor vazio (o eixo entre os centros é calculado na função collides_with)
     }
 
     fn center(&self) -> Vec2 {

@@ -155,7 +155,7 @@ impl Collider for OOBB {
         (center_p - extents_p, center_p + extents_p)
     }
 
-    fn axes(&self, _other: &dyn Collider) -> Vec<Vec2> {
+    fn axes(&self) -> Vec<Vec2> {
         vec![self.u, self.v]
     }
 }
