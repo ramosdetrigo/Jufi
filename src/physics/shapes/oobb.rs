@@ -5,7 +5,7 @@ use macroquad::{color::Color, shapes::draw_line};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{AABB, Circle, Collider},
+    physics::shapes::{AABB, Circle, Collider, Line},
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -139,6 +139,16 @@ fn minmax_projection(points: &Vec<Vec2>, axis: Vec2) -> (f64, f64) {
 impl Collider for OOBB {
     fn center(&self) -> Vec2 {
         self.center
+    }
+
+    fn edges(&self) -> Vec<Line> {
+        let (e1, e2, e3, e4) = self.corners();
+        vec![
+            Line::new(e1, e2),
+            Line::new(e2, e3),
+            Line::new(e3, e4),
+            Line::new(e4, e1),
+        ]
     }
 
     fn draw(&self, thickness: f32, color: Color) {

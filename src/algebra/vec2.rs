@@ -13,7 +13,7 @@ pub struct Vec2 {
 
 /// Epsilon para erro numérico
 const EPS: f64 = 1e-6;
-const EPS_SQR: f64 = EPS*EPS;
+const EPS_SQR: f64 = EPS * EPS;
 
 // Métodos
 impl Vec2 {
@@ -101,6 +101,14 @@ impl Vec2 {
     /// Checa se o vetor é paralelo ao outro (threshold: `1e-6`)
     pub fn is_parallel(self, other: Vec2) -> bool {
         return self.cross(other).abs() <= EPS;
+    }
+
+    #[inline]
+    #[must_use]
+    /// Checa se o vetor é igual ao outro com threshold: `1e-6`
+    /// (aplicado ao comprimento ao quadrado -> `1e-12`)
+    pub fn is_same(self, other: Vec2) -> bool {
+        return self.distance_to_squared(other) <= EPS_SQR;
     }
 
     #[inline]

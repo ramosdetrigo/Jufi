@@ -2,7 +2,7 @@ use macroquad::color::Color;
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{AABB, Circle, OOBB},
+    physics::shapes::{AABB, Circle, Line, OOBB},
 };
 
 /// Um trait que engloba caixas em geral (AABB e OOBB) e lida com suas colisões.
@@ -15,6 +15,9 @@ pub trait Collider {
 
     /// Retorna os valores min,max da projeção do objeto sobre um eixo
     fn project(&self, axis: Vec2) -> (f64, f64);
+
+    /// Retorna todas as bordas do objeto
+    fn edges(&self) -> Vec<Line>;
 
     /// Retorna os eixos com que o objeto contribui para o cálculo.
     /// (O "other" é necessário para definir o eixo do círculo:

@@ -2,7 +2,7 @@ use macroquad::{color::Color, shapes::draw_circle_lines};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{AABB, Collider, OOBB},
+    physics::shapes::{AABB, Collider, Line, OOBB},
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -55,12 +55,50 @@ impl Circle {
     pub fn contains_point(&self, point: Vec2) -> bool {
         point.distance_to_squared(self.center) < self.radius * self.radius
     }
+
+    /// Retorna o ponto mais próximo do círculo em uma linha
+    pub fn closest_point_on_line(&self, line: Line) -> Vec2 {
+        let line_dr = line.p2 - line.p1;
+        let ac = self.center - line.p1;
+        let t = (ac.dot(line_dr) / line_dr.length_squared()).clamp(0.0, 1.0);
+        line.p1 + line_dr * t
+    }
+
+    #[inline]
+    /// Retorna o eixo entre o centro do círculo e um ponto
+    /// (Vetor vazio se os pontos forem iguais. Evita vetor degenerado.)
+    fn sanitized_axis(&self, point: Vec2) -> Vec<Vec2> {
+        if self.center.is_same(point) {
+            vec![]
+        } else {
+            vec![(self.center - point).normalized()]
+        }
+    }
 }
 
 impl Collider for Circle {
     fn sat_axes(&self, other: &dyn Collider) -> Vec<Vec2> {
-        // Placeholder: Implementação errada
-        vec![(self.center - other.center()).normalized()]
+        let edges = other.edges();
+        // Caso 1: Círculo
+        if edges.is_empty() {
+            self.sanitized_axis(other.center())
+        // Caso 2: Ponto mais próximo
+        } else {
+            let closest_point = edges
+                .into_iter()
+                .map(|edge| self.closest_point_on_line(edge))
+                .min_by(|p1, p2| {
+                    let p1_dist = p1.distance_to_squared(self.center);
+                    let p2_dist = p2.distance_to_squared(self.center);
+                    p1_dist.total_cmp(&p2_dist)
+                })
+                .unwrap();
+            self.sanitized_axis(closest_point)
+        }
+    }
+
+    fn edges(&self) -> Vec<super::Line> {
+        vec![]
     }
 
     fn center(&self) -> Vec2 {

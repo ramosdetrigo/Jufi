@@ -4,7 +4,7 @@ use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{Circle, Collider, OOBB},
+    physics::shapes::{Circle, Collider, Line, OOBB},
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -84,6 +84,17 @@ impl AABB {
 impl Collider for AABB {
     fn center(&self) -> Vec2 {
         (self.min + self.max) / 2.0
+    }
+
+    fn edges(&self) -> Vec<Line> {
+        let (e1, e2) = (self.min, self.min + Vec2::X * self.width());
+        let (e3, e4) = (self.max, self.max - Vec2::X * self.width());
+        vec![
+            Line::new(e1, e2),
+            Line::new(e2, e3),
+            Line::new(e3, e4),
+            Line::new(e4, e1),
+        ]
     }
 
     fn draw(&self, thickness: f32, color: Color) {
