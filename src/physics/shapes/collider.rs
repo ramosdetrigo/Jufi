@@ -5,7 +5,7 @@ use crate::{
     physics::shapes::{AABB, Circle, Line, OOBB},
 };
 
-/// Um trait que engloba caixas em geral (AABB e OOBB) e lida com suas colisões.
+/// Um trait que engloba objetos em geral e lida com suas colisões.
 pub trait Collider {
     /// Desenha a caixa
     fn draw(&self, thickness: f32, color: Color);
