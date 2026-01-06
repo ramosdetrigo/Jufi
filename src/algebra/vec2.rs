@@ -115,7 +115,7 @@ impl Vec2 {
     #[must_use]
     /// Usa a definição do produto escalar para calcular o ângulo entre dois vetores
     pub fn angle_between(self, other: Vec2) -> f64 {
-        let cos_theta = self.normalized().dot(other.normalized());
+        let cos_theta = self.normalized().dot(other.normalized()).clamp(-1.0, 1.0);
         return cos_theta.acos();
     }
 
