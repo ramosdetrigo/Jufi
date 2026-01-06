@@ -25,20 +25,16 @@ pub fn random_point_radial(center: Vec2, radius: f64) -> Vec2 {
 #[must_use]
 /// Gera uma nuvem de N pontos em um retângulo (min_x,min_y) (max_x,max_y)
 pub fn point_cloud(n: usize, min_x: f64, min_y: f64, max_x: f64, max_y: f64) -> Vec<Vec2> {
-    let mut points = Vec::with_capacity(n);
-    for _ in 0..n {
-        points.push(random_point(min_x, min_y, max_x, max_y));
-    }
-    points
+    (0..n)
+        .map(|_| random_point(min_x, min_y, max_x, max_y))
+        .collect()
 }
 
 #[inline]
 #[must_use]
 /// Gera uma nuvem de N pontos em um raio ao redor de um ponto
 pub fn point_cloud_radial(n: usize, center: Vec2, radius: f64) -> Vec<Vec2> {
-    let mut points = Vec::with_capacity(n);
-    for _ in 0..n {
-        points.push(random_point_radial(center, radius))
-    }
-    points
+    (0..n)
+        .map(|_| random_point_radial(center, radius))
+        .collect()
 }
