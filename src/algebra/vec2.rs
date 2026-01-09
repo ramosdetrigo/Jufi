@@ -121,6 +121,93 @@ impl Vec2 {
 
     #[inline]
     #[must_use]
+    /// Usa a definição do produto vetorial para calcular o ângulo entre dois vetores
+    pub fn angle_between_cross(self, other: Vec2) -> f64 {
+        let sin_theta = self.normalized().cross(other.normalized()).clamp(-1.0, 1.0);
+        return sin_theta.asin();
+    }
+
+    #[inline]
+    #[must_use]
+    /// Usa a fórmula `1 - (u.v / ||u||||v||)` para retornar o pseudoângulo do cosseno
+    pub fn cos_pseudoangle_between(self, other: Vec2) -> f64 {
+        let top = self.dot(other);
+        let bottom = self.length() * other.length();
+        return 1.0 - (top / bottom).clamp(-1.0, 1.0);
+    }
+
+    #[inline]
+    #[must_use]
+    /// Retorna o pseudoângulo em `[0,8)` do vetor no perímetro do quadrado
+    pub fn square_pseudoangle(self) -> f64 {
+        let x = self.x;
+        let y = self.y;
+
+        // Valores absolutos para evitar problemas com coordenadas negativas
+        let ax = x.abs();
+        let ay = y.abs();
+
+        if x >= 0.0 {
+            if y >= 0.0 {
+                // Octantes 1 e 2
+                if ax >= ay {
+                    // 1
+                    ay / ax
+                } else {
+                    // 2 -> px é "excesso" de (0,1)
+                    2.0 - ax / ay
+                }
+            } else {
+                // Octantes 7 e 8
+                if ax >= ay {
+                    // 8 -> px é "excesso" de (1,0)
+                    8.0 - ay / ax
+                } else {
+                    // 7 -> ponto (0,-1) vale 6.0, soma px
+                    6.0 + ax / ay
+                }
+            }
+        } else {
+            if y >= 0.0 {
+                // Octantes 3 e 4
+                if ax >= ay {
+                    // 4 -> px é "excesso" de (-1,0)
+                    4.0 - ay / ax
+                } else {
+                    // 3 -> ponto (0,1) vale 2.0, soma px
+                    2.0 + ax / ay
+                }
+            } else {
+                // Octantes 5 e 6
+                if ax >= ay {
+                    // 5 -> ponto (-1,0) vale 4.0, soma px
+                    4.0 + ay / ax
+                } else {
+                    // 6 -> px é "excesso" de (0,-1)
+                    6.0 - ax / ay
+                }
+            }
+        }
+    }
+
+    #[inline]
+    #[must_use]
+    /// Retorna o pseudoângulo entre dois vetores em `[0,8)`
+    pub fn square_pseudoangle_between(self, other: Vec2) -> f64 {
+        let a = self.square_pseudoangle();
+        let b = other.square_pseudoangle();
+
+        let pseudo = b - a;
+        if pseudo < 0.0 {
+            // mantém o range em [0,8)
+            pseudo + 8.0
+        } else {
+            pseudo
+        }
+    }
+
+    #[inline]
+    #[must_use]
     /// Gira o vetor em um ângulo específico ao redor da origem.
     /// Isso usa a definição da matriz de rotação para os cálculos.
     pub fn rotated(self, theta: f64) -> Vec2 {
