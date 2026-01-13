@@ -35,7 +35,7 @@ async fn main() {
     let mut oobb2 = OOBB::enclosing(&cloud5);
 
     // Gera um círculo que vai seguir o mouse
-    let mut mouse_circle = Circle::new(Vec2::NULL, 10.0);
+    let mut mouse: Box<dyn Collider> = Box::new(Circle::new(Vec2::NULL, 10.0));
 
     loop {
         // Setup do frame atual
@@ -45,8 +45,9 @@ async fn main() {
         let _delta = get_frame_time();
 
         // Atualiza a posição e o tamanho do círculo
-        mouse_circle.center = mouse_pos;
-        mouse_circle.radius += mouse_wheel().1 as f64 * 2.0; // Y da roda do mouse
+        mouse.set_center(mouse_pos);
+        let dx = mouse_wheel().1 as f64 * 2.0; // Y da roda do mouse
+        mouse.grow(dx, dx); 
 
         // Randomiza as respectivas nuvens ao pressionar as teclas de 1 a 4
         if is_key_pressed(KeyCode::Key1) {
@@ -71,7 +72,7 @@ async fn main() {
         }
 
         // Desenha cada collider checando por colisão uma com a outra
-        let colliders: [&dyn Collider; 6] = [&aabb1, &aabb2, &oobb1, &oobb2, &circle, &mouse_circle];
+        let colliders: [&dyn Collider; 6] = [&aabb1, &aabb2, &oobb1, &oobb2, &circle, &*mouse];
 
         colliders.iter().for_each(|c| {
             let is_hit = colliders.iter()
