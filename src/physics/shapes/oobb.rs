@@ -161,7 +161,7 @@ impl Collider for OOBB {
     }
 
     fn size(&self) -> Vec2 {
-        self.extents
+        self.extents * 2.0
     }
 
     fn center(&self) -> Vec2 {
