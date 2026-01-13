@@ -77,6 +77,20 @@ impl Circle {
 }
 
 impl Collider for Circle {
+    fn grow(&mut self, width: f64, height: f64) {
+        self.radius += width.max(height)
+    }
+
+    fn rotate(&mut self, _theta: f64) {}
+
+    fn set_center(&mut self, pos: Vec2) {
+        self.center = pos
+    }
+
+    fn size(&self) -> Vec2 {
+        Vec2::new(self.radius, self.radius)
+    }
+
     fn sat_axes(&self, other: &dyn Collider) -> Vec<Vec2> {
         let edges = other.edges();
         // Caso 1: Círculo -> Eixo entre os dois centros

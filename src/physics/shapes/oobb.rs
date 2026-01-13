@@ -137,6 +137,24 @@ fn minmax_projection(points: &Vec<Vec2>, axis: Vec2) -> (f64, f64) {
 }
 
 impl Collider for OOBB {
+    fn grow(&mut self, width: f64, height: f64) {
+        self.extents.x += width;
+        self.extents.y += height;
+    }
+
+    fn rotate(&mut self, theta: f64) {
+        self.u = self.u.rotated(theta).normalized();
+        self.v = self.v.rotated(theta).normalized();
+    }
+
+    fn set_center(&mut self, pos: Vec2) {
+        self.center = pos;
+    }
+
+    fn size(&self) -> Vec2 {
+        self.extents
+    }
+
     fn center(&self) -> Vec2 {
         self.center
     }

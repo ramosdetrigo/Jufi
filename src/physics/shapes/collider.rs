@@ -7,7 +7,19 @@ use crate::{
 
 /// Um trait que engloba objetos em geral e lida com suas colisões.
 pub trait Collider {
-    /// Desenha a caixa
+    /// Move o centro do objeto para uma posição específica
+    fn set_center(&mut self, pos: Vec2);
+
+    /// Rotaciona o objeto por um ângulo theta (só funciona para OOBB no código atual)
+    fn rotate(&mut self, theta: f64);
+
+    /// Aumenta/diminui o tamanho do objeto
+    fn grow(&mut self, width: f64, height: f64);
+
+    /// Retorna a largura e altura do objeto
+    fn size(&self) -> Vec2;
+
+    /// Desenha o objeto
     fn draw(&self, thickness: f32, color: Color);
 
     /// Retorna o centro do objeto

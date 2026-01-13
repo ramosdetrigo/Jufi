@@ -82,6 +82,29 @@ impl AABB {
 }
 
 impl Collider for AABB {
+    fn grow(&mut self, width: f64, height: f64) {
+        let half_w = width / 2.0;
+        let half_h = height / 2.0;
+
+        self.min.x -= half_w;
+        self.min.y -= half_h;
+
+        self.max.x += half_w;
+        self.max.y += half_h;
+    }
+
+    fn rotate(&mut self, _theta: f64) {}
+
+    fn set_center(&mut self, pos: Vec2) {
+        let offset = pos - self.center();
+        self.max += offset;
+        self.min += offset;
+    }
+
+    fn size(&self) -> Vec2 {
+        self.max - self.min
+    }
+
     fn center(&self) -> Vec2 {
         (self.min + self.max) / 2.0
     }
