@@ -78,7 +78,10 @@ impl Circle {
 
 impl Collider for Circle {
     fn grow(&mut self, width: f64, height: f64) {
-        self.radius += width.max(height)
+        if width.abs() > height.abs() {
+            self.radius += width
+        }
+        self.radius += height
     }
 
     fn rotate(&mut self, _theta: f64) {}

@@ -132,7 +132,7 @@ async fn main() {
             Some(&nunito),
         );
         print(
-            "Roda do mouse - Aumenta o círculo do mouse",
+            "Q, W, D - Objeto do mouse vira círculo, AABB, ou OOBB, respectivamente.",
             10.0,
             24.0,
             16,
@@ -140,9 +140,25 @@ async fn main() {
             Some(&nunito),
         );
         print(
-            "Amarelo: colisão | Branco: sem colisão",
+            "Roda do mouse - Aumenta o objeto do mouse (shift para aumentar na horizontal)",
             10.0,
             38.0,
+            16,
+            color::WHITE,
+            Some(&nunito),
+        );
+        print(
+            "A e D - Gira o objeto (só OOBB)",
+            10.0,
+            52.0,
+            16,
+            color::WHITE,
+            Some(&nunito),
+        );
+        print(
+            "Amarelo: colisão | Branco: sem colisão",
+            10.0,
+            66.0,
             16,
             color::WHITE,
             Some(&nunito),
