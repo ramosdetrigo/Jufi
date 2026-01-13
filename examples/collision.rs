@@ -1,4 +1,4 @@
-use std::ptr;
+use std::{f64::consts::PI, ptr};
 
 use jufi::{
     algebra::Vec2,
@@ -44,11 +44,6 @@ async fn main() {
         let mouse_pos = Vec2::new(mx as f64, my as f64);
         let _delta = get_frame_time();
 
-        // Atualiza a posição e o tamanho do círculo
-        mouse.set_center(mouse_pos);
-        let dx = mouse_wheel().1 as f64 * 2.0; // Y da roda do mouse
-        mouse.grow(dx, dx); 
-
         // Randomiza as respectivas nuvens ao pressionar as teclas de 1 a 4
         if is_key_pressed(KeyCode::Key1) {
             cloud1 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 250.0), 100.0);
@@ -71,11 +66,50 @@ async fn main() {
             oobb2 = OOBB::enclosing(&cloud5);
         }
 
+        // Controle a forma que segue o mouse
+        mouse.set_center(mouse_pos); // Atualiza a posição
+
+        let (dx, dy);
+        // Lê a roda do mouse
+        if is_key_down(KeyCode::LeftShift) {
+            // Modifier: Shift -> Cresce na horizontal ao invés de na vertical
+            dx = mouse_wheel().1 as f64 * 2.0;
+            dy = 0.0;
+        } else {
+            dx = 0.0;
+            dy = mouse_wheel().1 as f64 * 2.0;
+        }
+        mouse.grow(dx, dy);
+
+        // Gira o objeto
+        if is_key_down(KeyCode::A) {
+            mouse.rotate(-0.025);
+        } else if is_key_down(KeyCode::D) {
+            mouse.rotate(0.025);
+        }
+
+        if is_key_pressed(KeyCode::Q) {
+            // Circle
+            let prev_size = mouse.size();
+            mouse = Box::new(Circle::new(mouse.center(), prev_size.x.max(prev_size.y)))
+        } else if is_key_pressed(KeyCode::W) {
+            // AABB
+            let offset = mouse.size() / 2.0;
+            let prev_center = mouse.center();
+            mouse = Box::new(AABB::new(prev_center - offset, prev_center + offset))
+        } else if is_key_pressed(KeyCode::E) {
+            // OOBB
+            let prev_size = mouse.size();
+            let prev_center = mouse.center();
+            mouse = Box::new(OOBB::from_angle(prev_center, prev_size / 2.0, PI / 4.0))
+        }
+
         // Desenha cada collider checando por colisão uma com a outra
         let colliders: [&dyn Collider; 6] = [&aabb1, &aabb2, &oobb1, &oobb2, &circle, &*mouse];
 
         colliders.iter().for_each(|c| {
-            let is_hit = colliders.iter()
+            let is_hit = colliders
+                .iter()
                 // ptr::eq --> skipa colisão consigo mesmo
                 .any(|other| !ptr::eq(c, other) && collides(*c, *other));
             c.draw(2.0, if is_hit { color::YELLOW } else { color::WHITE })
