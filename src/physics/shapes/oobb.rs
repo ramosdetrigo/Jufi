@@ -37,7 +37,7 @@ impl OOBB {
         // Testa os 180 os ângulos entre -90 e 89 para ver qual a melhor bounding box (força bruta)
         (-90..90)
             .par_bridge() // Faz as computações em paralelo usando a biblioteca Rayon
-            .map(|t| OOBB::from_angle(points, (t as f64).to_radians()))
+            .map(|t| OOBB::from_angle_enclosing(points, (t as f64).to_radians()))
             .min_by(|a, b| a.area().total_cmp(&b.area()))
             .unwrap()
     }
@@ -47,12 +47,21 @@ impl OOBB {
         (self.extents.x * 2.0) * (self.extents.y * 2.0)
     }
 
-    /// Função privada pra criar uma OOBB que engloba pontos com eixo U
+    /// Função para criar uma OOBB que engloba pontos com eixo U
     /// definido por um certo ângulo
-    fn from_angle(points: &Vec<Vec2>, theta: f64) -> OOBB {
+    pub fn from_angle(center: Vec2, extents: Vec2, theta: f64) -> OOBB {
         // Cria um vetor U baseado em um ângulo específico
-        let u = Vec2::from_angle(theta);
-        let v = Vec2::new(-u.y, u.x);
+        let u = Vec2::from_angle(theta).normalized();
+        let v = Vec2::new(-u.y, u.x).normalized();
+        OOBB::new(center, extents, u, v)
+    }
+
+    /// Função para criar uma OOBB que engloba pontos com eixo U
+    /// definido por um certo ângulo
+    pub fn from_angle_enclosing(points: &Vec<Vec2>, theta: f64) -> OOBB {
+        // Cria um vetor U baseado em um ângulo específico
+        let u = Vec2::from_angle(theta).normalized();
+        let v = Vec2::new(-u.y, u.x).normalized();
 
         // Obtém os extents de acordo com a projeção dos pontos nos eixos
         let (min_u, max_u) = minmax_projection(points, u);
