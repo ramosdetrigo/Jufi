@@ -19,7 +19,7 @@ impl AABB {
     /// dos pontos e constrói uma AABB com min = (min_x,min_y) e max = (max_x,max_y)
     pub fn new(p1: Vec2, p2: Vec2) -> AABB {
         let (min_x, min_y) = (p1.x.min(p2.x), p1.y.min(p2.y));
-        let (max_x, max_y) = (p1.x.max(p2.y), p1.y.max(p2.y));
+        let (max_x, max_y) = (p1.x.max(p2.x), p1.y.max(p2.y));
         AABB {
             min: Vec2::new(min_x, min_y),
             max: Vec2::new(max_x, max_y),
