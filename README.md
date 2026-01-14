@@ -3,11 +3,11 @@ Biblioteca de física 2D criada como trabalho final da cadeira de matemática e 
 
 Features:
 - Simulação de partículas / colisão de partículas com linhas
-- Checks de pertencimento de ponto a AABBs, OOBBs, e Círculos.
-- Checks de sobreposição entre AABBs, OOBBs e Círculos.
+- Checks de pertencimento de ponto a AABBs, OBBs, e Círculos.
+- Checks de sobreposição entre AABBs, OBBs e Círculos.
   - Todos via SAT (Separating Axis Theorem).
 - Geradores radiais e "em caixa" de nuvens de pontos
-- Geração de AABBs, OOBBs, e Círculos que englobam nuvem de pontos
+- Geração de AABBs, OBBs, e Círculos que englobam nuvem de pontos
 
 Bibliotecas usadas:
 - [Macroquad](https://macroquad.rs/) - para interatividade e desenhar coisas na tela
@@ -15,7 +15,7 @@ Bibliotecas usadas:
 
 # Exemplos
 ### collision
-Testes de colisão entre bounding boxes (aabb, oobb, e círculos) \
+Testes de colisão entre bounding boxes (aabb, OBB, e círculos) \
 `cargo run --example collision` \
 ![collision](collision.png)
 

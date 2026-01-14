@@ -2,7 +2,7 @@ use macroquad::color::Color;
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{AABB, Circle, Line, OOBB},
+    physics::shapes::{AABB, Circle, Line, OBB},
 };
 
 /// Um trait que engloba objetos em geral e lida com suas colisões.
@@ -10,7 +10,7 @@ pub trait Collider {
     /// Move o centro do objeto para uma posição específica
     fn set_center(&mut self, pos: Vec2);
 
-    /// Rotaciona o objeto por um ângulo theta (só funciona para OOBB no código atual)
+    /// Rotaciona o objeto por um ângulo theta (só funciona para OBB no código atual)
     fn rotate(&mut self, theta: f64);
 
     /// Aumenta/diminui o tamanho do objeto

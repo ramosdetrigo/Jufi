@@ -4,7 +4,7 @@ use jufi::{
     algebra::Vec2,
     physics::{
         generators::point_cloud_radial,
-        shapes::{AABB, Circle, Collider, OOBB, collides},
+        shapes::{AABB, Circle, Collider, OBB, collides},
     },
     utils::{print, randf_range},
 };
@@ -29,10 +29,10 @@ async fn main() {
     let mut cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 150.0), 100.0);
 
     let mut aabb1 = AABB::enclosing(&cloud1);
-    let mut oobb1 = OOBB::enclosing(&cloud2);
+    let mut obb1 = OBB::enclosing(&cloud2);
     let mut aabb2 = AABB::enclosing(&cloud3);
     let mut circle = Circle::enclosing(&cloud4);
-    let mut oobb2 = OOBB::enclosing(&cloud5);
+    let mut obb2 = OBB::enclosing(&cloud5);
 
     // Gera um círculo que vai seguir o mouse
     let mut mouse: Box<dyn Collider> = Box::new(Circle::new(Vec2::NULL, 10.0));
@@ -51,7 +51,7 @@ async fn main() {
         }
         if is_key_pressed(KeyCode::Key2) {
             cloud2 = point_cloud_radial(randf_range(3, 50), Vec2::new(400.0, 250.0), 100.0);
-            oobb1 = OOBB::enclosing(&cloud2)
+            obb1 = OBB::enclosing(&cloud2)
         }
         if is_key_pressed(KeyCode::Key3) {
             cloud3 = point_cloud_radial(randf_range(3, 50), Vec2::new(200.0, 400.0), 100.0);
@@ -63,7 +63,7 @@ async fn main() {
         }
         if is_key_pressed(KeyCode::Key5) {
             cloud5 = point_cloud_radial(randf_range(3, 50), Vec2::new(300.0, 150.0), 100.0);
-            oobb2 = OOBB::enclosing(&cloud5);
+            obb2 = OBB::enclosing(&cloud5);
         }
 
         // Controle a forma que segue o mouse
@@ -98,14 +98,14 @@ async fn main() {
             let prev_center = mouse.center();
             mouse = Box::new(AABB::new(prev_center - offset, prev_center + offset))
         } else if is_key_pressed(KeyCode::E) {
-            // OOBB
+            // OBB
             let prev_size = mouse.size();
             let prev_center = mouse.center();
-            mouse = Box::new(OOBB::from_angle(prev_center, prev_size / 2.0, PI / 4.0))
+            mouse = Box::new(OBB::from_angle(prev_center, prev_size / 2.0, PI / 4.0))
         }
 
         // Desenha cada collider checando por colisão uma com a outra
-        let colliders: [&dyn Collider; 6] = [&aabb1, &aabb2, &oobb1, &oobb2, &circle, &*mouse];
+        let colliders: [&dyn Collider; 6] = [&aabb1, &aabb2, &obb1, &obb2, &circle, &*mouse];
 
         colliders.iter().for_each(|c| {
             let is_hit = colliders
@@ -132,7 +132,7 @@ async fn main() {
             Some(&nunito),
         );
         print(
-            "Q, W, D - Objeto do mouse vira círculo, AABB, ou OOBB, respectivamente.",
+            "Q, W, D - Objeto do mouse vira círculo, AABB, ou OBB, respectivamente.",
             10.0,
             24.0,
             16,
@@ -148,7 +148,7 @@ async fn main() {
             Some(&nunito),
         );
         print(
-            "A e D - Gira o objeto (só OOBB)",
+            "A e D - Gira o objeto (só OBB)",
             10.0,
             52.0,
             16,

@@ -2,7 +2,7 @@ use macroquad::{color::Color, shapes::draw_circle_lines};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{AABB, Collider, Line, OOBB},
+    physics::shapes::{AABB, Collider, Line, OBB},
 };
 
 #[derive(Clone, Copy, PartialEq)]

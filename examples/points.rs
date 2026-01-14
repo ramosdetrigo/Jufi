@@ -2,7 +2,7 @@ use jufi::{
     algebra::Vec2,
     physics::{
         generators::point_cloud,
-        shapes::{AABB, Circle, OOBB},
+        shapes::{AABB, Circle, OBB},
     },
     utils::{print, randf_range},
 };
@@ -24,7 +24,7 @@ async fn main() {
     let mut points = point_cloud(randf_range(3, 50), 200.0, 150.0, 600.0, 450.0);
     let mut aabb = AABB::enclosing(&points);
     let mut circle = Circle::enclosing(&points);
-    let mut oobb = OOBB::enclosing(&points);
+    let mut obb = OBB::enclosing(&points);
     let mut mouse_point;
 
     loop {
@@ -42,7 +42,7 @@ async fn main() {
             points = point_cloud(randf_range(3, 50), 200.0, 150.0, 600.0, 450.0);
             aabb = AABB::enclosing(&points);
             circle = Circle::enclosing(&points);
-            oobb = OOBB::enclosing(&points);
+            obb = OBB::enclosing(&points);
         }
 
         // Adiciona ponto na nuvem
@@ -50,21 +50,21 @@ async fn main() {
             points.push(mouse_point);
             aabb = AABB::enclosing(&points);
             circle = Circle::enclosing(&points);
-            oobb = OOBB::enclosing(&points);
+            obb = OBB::enclosing(&points);
         }
 
         // Desenha as boundaries e a nuvem
         aabb.draw(2.0, color::WHITE);
         circle.draw(2.0, color::WHITE);
-        oobb.draw(2.0, color::WHITE);
+        obb.draw(2.0, color::WHITE);
         for p in &points {
             p.draw(color::YELLOW);
         }
 
         // Desenha o ponto do mouse e avisos de "colisão"
         mouse_point.draw(color::RED);
-        if oobb.contains_point(mouse_point) {
-            print("O mouse está dentro da OOBB!", 10.0, 10.0, 20, color::PINK, Some(&nunito));
+        if obb.contains_point(mouse_point) {
+            print("O mouse está dentro da OBB!", 10.0, 10.0, 20, color::PINK, Some(&nunito));
         }
         if aabb.contains_point(mouse_point) {
             print("O mouse está dentro da AABB!", 10.0, 30.0, 20, color::YELLOW, Some(&nunito));

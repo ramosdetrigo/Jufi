@@ -9,19 +9,19 @@ use crate::{
 };
 
 #[derive(Clone, Copy, PartialEq)]
-pub struct OOBB {
+pub struct OBB {
     pub center: Vec2,
     pub extents: Vec2,
     pub u: Vec2,
     pub v: Vec2,
 }
 
-impl OOBB {
+impl OBB {
     #[inline]
     #[must_use]
-    /// Construtor genérico de OOBB.
-    pub fn new(center: Vec2, extents: Vec2, u: Vec2, v: Vec2) -> OOBB {
-        OOBB {
+    /// Construtor genérico de OBB.
+    pub fn new(center: Vec2, extents: Vec2, u: Vec2, v: Vec2) -> OBB {
+        OBB {
             center,
             extents,
             u: u.normalized(),
@@ -29,36 +29,36 @@ impl OOBB {
         }
     }
 
-    /// Cria uma OOBB que engloba todos os pontos de um vetor.
-    /// Usa um algoritmo "força bruta" para gerar uma OOBB ótima.
+    /// Cria uma OBB que engloba todos os pontos de um vetor.
+    /// Usa um algoritmo "força bruta" para gerar uma OBB ótima.
     /// Pânico se points.len() == 0
-    pub fn enclosing(points: &Vec<Vec2>) -> OOBB {
+    pub fn enclosing(points: &Vec<Vec2>) -> OBB {
         assert!(points.len() > 0, "Número de pontos deve ser maior que 0!");
         // Testa os 180 os ângulos entre -90 e 89 para ver qual a melhor bounding box (força bruta)
         (-90..90)
             .par_bridge() // Faz as computações em paralelo usando a biblioteca Rayon
-            .map(|t| OOBB::from_angle_enclosing(points, (t as f64).to_radians()))
+            .map(|t| OBB::from_angle_enclosing(points, (t as f64).to_radians()))
             .min_by(|a, b| a.area().total_cmp(&b.area()))
             .unwrap()
     }
 
-    /// Retorna a área da OOBB
+    /// Retorna a área da OBB
     pub fn area(&self) -> f64 {
         (self.extents.x * 2.0) * (self.extents.y * 2.0)
     }
 
-    /// Função para criar uma OOBB que engloba pontos com eixo U
+    /// Função para criar uma OBB que engloba pontos com eixo U
     /// definido por um certo ângulo
-    pub fn from_angle(center: Vec2, extents: Vec2, theta: f64) -> OOBB {
+    pub fn from_angle(center: Vec2, extents: Vec2, theta: f64) -> OBB {
         // Cria um vetor U baseado em um ângulo específico
         let u = Vec2::from_angle(theta).normalized();
         let v = Vec2::new(-u.y, u.x).normalized();
-        OOBB::new(center, extents, u, v)
+        OBB::new(center, extents, u, v)
     }
 
-    /// Função para criar uma OOBB que engloba pontos com eixo U
+    /// Função para criar uma OBB que engloba pontos com eixo U
     /// definido por um certo ângulo
-    pub fn from_angle_enclosing(points: &Vec<Vec2>, theta: f64) -> OOBB {
+    pub fn from_angle_enclosing(points: &Vec<Vec2>, theta: f64) -> OBB {
         // Cria um vetor U baseado em um ângulo específico
         let u = Vec2::from_angle(theta).normalized();
         let v = Vec2::new(-u.y, u.x).normalized();
@@ -68,12 +68,12 @@ impl OOBB {
         let (min_v, max_v) = minmax_projection(points, v);
         let extents = Vec2::new(max_u - min_u, max_v - min_v) / 2.0;
 
-        // Calcula o centro da OOBB
+        // Calcula o centro da OBB
         let center = ((min_u + max_u) * u + (min_v + max_v) * v) / 2.0;
-        OOBB::new(center, extents, u, v)
+        OBB::new(center, extents, u, v)
     }
 
-    /// Retorna as 4 pontas da OOBB
+    /// Retorna as 4 pontas da OBB
     fn corners(&self) -> (Vec2, Vec2, Vec2, Vec2) {
         (
             self.center - (self.u * self.extents.x) - (self.v * self.extents.y),
@@ -83,9 +83,9 @@ impl OOBB {
         )
     }
 
-    /// Checa se a OOBB contém um ponto
+    /// Checa se a OBB contém um ponto
     pub fn contains_point(&self, point: Vec2) -> bool {
-        // Projeta o ponto pro espaço local da OOBB
+        // Projeta o ponto pro espaço local da OBB
         let p_translated = point - self.center;
         let u_proj = p_translated.dot(self.u);
         let v_proj = p_translated.dot(self.v);
@@ -145,7 +145,7 @@ fn minmax_projection(points: &Vec<Vec2>, axis: Vec2) -> (f64, f64) {
     (min, max)
 }
 
-impl Collider for OOBB {
+impl Collider for OBB {
     fn grow(&mut self, width: f64, height: f64) {
         self.extents.x += width;
         self.extents.y += height;

@@ -4,7 +4,7 @@ use macroquad::{color::Color, shapes::draw_rectangle_lines};
 
 use crate::{
     algebra::Vec2,
-    physics::shapes::{Circle, Collider, Line, OOBB},
+    physics::shapes::{Circle, Collider, Line, OBB},
 };
 
 #[derive(Clone, Copy, PartialEq)]
