@@ -81,7 +81,8 @@ impl Collider for Circle {
         if width.abs() > height.abs() {
             self.radius += width
         }
-        self.radius += height
+        self.radius += height;
+        self.radius = self.radius.max(0.0)
     }
 
     fn rotate(&mut self, _theta: f64) {}

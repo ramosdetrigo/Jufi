@@ -147,8 +147,8 @@ fn minmax_projection(points: &Vec<Vec2>, axis: Vec2) -> (f64, f64) {
 
 impl Collider for OBB {
     fn grow(&mut self, width: f64, height: f64) {
-        self.extents.x += width;
-        self.extents.y += height;
+        self.extents.x = (self.extents.x + width).max(0.0);
+        self.extents.y = (self.extents.y + height).max(0.0);
     }
 
     fn rotate(&mut self, theta: f64) {

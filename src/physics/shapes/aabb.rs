@@ -86,11 +86,13 @@ impl Collider for AABB {
         let half_w = width / 2.0;
         let half_h = height / 2.0;
 
-        self.min.x -= half_w;
-        self.min.y -= half_h;
+        let new_min = Vec2::new(self.min.x - half_w, self.min.y - half_h);
+        let new_max = Vec2::new(self.max.x + half_w, self.max.y + half_h);
 
-        self.max.x += half_w;
-        self.max.y += half_h;
+        if new_min.x <= new_max.x && new_min.y <= new_max.y {
+            self.min = new_min;
+            self.max = new_max;
+        }
     }
 
     fn rotate(&mut self, _theta: f64) {}
